@@ -233,7 +233,7 @@ class sfPhpunitTest extends lime_test
    */
   public function comment($msg)
   {
-    $this->diag('COMMENT: ' . $msg);
+    // $this->diag('COMMENT: ' . $msg);
   }
 
   /**
@@ -243,7 +243,7 @@ class sfPhpunitTest extends lime_test
    */
   public function info($msg)
   {
-    $this->diag('INFO: ' . $msg);
+    // $this->diag('INFO: ' . $msg);
   }
 
   /**
@@ -253,7 +253,7 @@ class sfPhpunitTest extends lime_test
    */
   public function error($msg)
   {
-    $this->diag('ERROR: ' . $msg);
+    // $this->diag('ERROR: ' . $msg);
   }
 
   /**
@@ -265,7 +265,7 @@ class sfPhpunitTest extends lime_test
   {
     // PHPUnit does not support a native output method,
     // so do a normal echo call here.
-    echo ">>$msg \n";
+    // echo ">>$msg \n";
   }
 
 }

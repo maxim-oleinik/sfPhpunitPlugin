@@ -21,13 +21,12 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
 	 */
 	private $context = null;
 
-
-	/**
-	 * The sfBrowser instance
-	 *
-	 * @var sfBrowser
-	 */
-	private $testBrowser;
+    /**
+     * The sfTestFunctional instance
+     *
+	 * @var sfTestFunctional
+     */
+	protected $browser;
 
 	/**
 	* Returns application name
@@ -80,20 +79,20 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
 		$this->initializeContext();
 
 		// autoloading ready, continue
-		$this->testBrowser = new sfTestFunctional(new sfBrowser(), new sfPhpunitTest($this));
-
+		$this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPhpunitTest($this));
 		$this->_start();
 	}
 
 	/**
-	 * Returns the sfBrowser instance
+	 * Returns the sfTestFunctional instance
 	 *
-	 * @return sfBrowser
+	 * @return sfTestFunctional
 	 */
 	public function getBrowser()
 	{
-		return $this->testBrowser;
+		return $this->browser;
 	}
+
 
 	/**
 	 * tearDown method for PHPUnit
@@ -135,5 +134,77 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
 
 		return $this->context;
 	}
+
+
+    /**
+     * Run test
+     *
+     * Catch exception and decorate it with last request data
+     */
+    protected function runTest()
+    {
+        try {
+            parent::runTest();
+        } catch (Exception $e) {
+            throw $this->_decorateExeption($e);
+        }
+    }
+
+
+    /**
+     * Decorate exception with last request data
+     *
+     * @param  Exception $e
+     * @return Exception
+     */
+    private function _decorateExeption(Exception $e)
+    {
+        $className = get_class($e);
+
+        if ($e instanceof PHPUnit_Framework_ExpectationFailedException) {
+            if (!$e->getCustomMessage()) {
+                return new $className(
+                    $this->_makeRequestErrorMessage($e->getDescription()) . PHP_EOL,
+                    $e->getComparisonFailure()
+                );
+            } else {
+                return new $className(
+                    $e->getDescription(),
+                    $e->getComparisonFailure(),
+                    $this->_makeRequestErrorMessage($e->getCustomMessage()) . PHP_EOL
+                );
+            }
+
+        } else if ($e instanceof PHPUnit_Framework_Error) {
+            return new $className(
+                $this->_makeRequestErrorMessage($e->getMessage()),
+                $e->getCode(),
+                $e->getFile(),
+                $e->getLine(),
+                $e->getTrace()
+            );
+
+        } else {
+            return new $className(
+                $this->_makeRequestErrorMessage($e->getMessage()),
+                $e->getCode()
+            );
+        }
+    }
+
+
+    /**
+     * Make request error message with last request uri and params
+     *
+     * @param  string - User defined message
+     * @return strung
+     */
+    private function _makeRequestErrorMessage($mess)
+    {
+        $result = $mess  . PHP_EOL . PHP_EOL
+                . 'Request: ' . $this->browser->getLastRequestUri() . PHP_EOL
+                . 'Request params: ' . $this->browser->getLastRequestParams();
+        return $result;
+    }
 
 }
