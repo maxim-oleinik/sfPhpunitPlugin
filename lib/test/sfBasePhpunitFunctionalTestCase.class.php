@@ -159,6 +159,10 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
      */
     private function _decorateExeption(Exception $e)
     {
+        if (!$this->browser->getLastRequestUri()) {
+            return $e;
+        }
+
         $className = get_class($e);
 
         if ($e instanceof PHPUnit_Framework_ExpectationFailedException) {
