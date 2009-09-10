@@ -80,6 +80,11 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
 
         // autoloading ready, continue
         $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPhpunitTest($this));
+
+        // Initialize SCRIPT_NAME for correct work $this->generateUrl()
+        // when $_SERVER is empty before first request
+        $_SERVER['SCRIPT_NAME'] = '/index.php';
+
         $this->_start();
     }
 
@@ -133,6 +138,28 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
         }
 
         return $this->context;
+    }
+
+
+    /**
+     * Generate URL from route name
+     *
+     * Example:
+     *   $this->generateUrl('homepage');
+     *      -> "/"
+     *   $this->generateUrl('article_edit', $articleObject);
+     *      -> "/article/1/edit"
+     *   $this->generateUrl('custom_route', $arrRouteParams);
+     *
+     * @see sfPatternRouting::generate()
+     *
+     * @param  string      $name   - Route name from routing.yml
+     * @param  array|Model $params - Routing params
+     * @return string
+     */
+    protected function generateUrl($name, $params = array())
+    {
+        return $this->browser->getContext()->getRouting()->generate($name, $params);
     }
 
 
