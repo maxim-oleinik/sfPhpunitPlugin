@@ -14,126 +14,126 @@ require_once dirname(__FILE__).'/../../../../config/ProjectConfiguration.class.p
  */
 abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCase
 {
-	/**
-	 * The sfContext instance
-	 *
-	 * @var sfContext
-	 */
-	private $context = null;
+    /**
+     * The sfContext instance
+     *
+     * @var sfContext
+     */
+    private $context = null;
 
     /**
      * The sfTestFunctional instance
      *
-	 * @var sfTestFunctional
+     * @var sfTestFunctional
      */
-	protected $browser;
+    protected $browser;
 
-	/**
-	* Returns application name
-	*
-	* @return string
-	*/
-	abstract protected function getApplication();
-
-
-	/**
-	* Returns environment name
-	*
-	* @return string
-	*/
-	abstract protected function getEnvironment();
-
-	/**
-	 * Returns if the test should be run in debug mode
-	 *
-	 * @return bool
-	 */
-	protected function isDebug()
-	{
-		return true;
-	}
-
-	/**
-	 * Dev hook for custom "setUp" stuff
-	 *
-	 */
-	protected function _start()
-	{
-	}
-
-	/**
-	 * Dev hook for custom "tearDown" stuff
-	 *
-	 */
-	protected function _end()
-	{
-	}
-
-	/**
-	 * setUp method for PHPUnit
-	 *
-	 */
-	protected function setUp()
-	{
-		// first we need the context and autoloading
-		$this->initializeContext();
-
-		// autoloading ready, continue
-		$this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPhpunitTest($this));
-		$this->_start();
-	}
-
-	/**
-	 * Returns the sfTestFunctional instance
-	 *
-	 * @return sfTestFunctional
-	 */
-	public function getBrowser()
-	{
-		return $this->browser;
-	}
+    /**
+     * Returns application name
+     *
+     * @return string
+     */
+    abstract protected function getApplication();
 
 
-	/**
-	 * tearDown method for PHPUnit
-	 *
-	 */
-	protected function tearDown()
-	{
-		$this->_end();
-	}
+    /**
+     * Returns environment name
+     *
+     * @return string
+     */
+    abstract protected function getEnvironment();
 
-	/**
-	 * Intializes the context for this test
-	 *
-	 */
-	private function initializeContext()
-	{
-		// only initialize the context one time
-		if(!$this->context)
-		{
-			$configuration = ProjectConfiguration::getApplicationConfiguration($this->getApplication(), $this->getEnvironment(), $this->isDebug());
-			sfContext::createInstance($configuration);
+    /**
+     * Returns if the test should be run in debug mode
+     *
+     * @return bool
+     */
+    protected function isDebug()
+    {
+        return true;
+    }
 
-			// remove all cache
-			sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
-		}
-	}
+    /**
+     * Dev hook for custom "setUp" stuff
+     *
+     */
+    protected function _start()
+    {
+    }
 
-	/*
-	 * Returns sfContext instance
-	 *
-	 * @return sfContext
-	 */
-	protected function getContext()
-	{
-		if(!$this->context)
-		{
-			$this->context = sfContext::getInstance();
-		}
+    /**
+     * Dev hook for custom "tearDown" stuff
+     *
+     */
+    protected function _end()
+    {
+    }
 
-		return $this->context;
-	}
+    /**
+     * setUp method for PHPUnit
+     *
+     */
+    protected function setUp()
+    {
+        // first we need the context and autoloading
+        $this->initializeContext();
+
+        // autoloading ready, continue
+        $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPhpunitTest($this));
+        $this->_start();
+    }
+
+    /**
+     * Returns the sfTestFunctional instance
+     *
+     * @return sfTestFunctional
+     */
+    public function getBrowser()
+    {
+        return $this->browser;
+    }
+
+
+    /**
+     * tearDown method for PHPUnit
+     *
+     */
+    protected function tearDown()
+    {
+        $this->_end();
+    }
+
+    /**
+     * Intializes the context for this test
+     *
+     */
+    private function initializeContext()
+    {
+        // only initialize the context one time
+        if(!$this->context)
+        {
+            $configuration = ProjectConfiguration::getApplicationConfiguration($this->getApplication(), $this->getEnvironment(), $this->isDebug());
+            sfContext::createInstance($configuration);
+
+            // remove all cache
+            sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
+        }
+    }
+
+    /*
+     * Returns sfContext instance
+     *
+     * @return sfContext
+     */
+    protected function getContext()
+    {
+        if(!$this->context)
+        {
+            $this->context = sfContext::getInstance();
+        }
+
+        return $this->context;
+    }
 
 
     /**
