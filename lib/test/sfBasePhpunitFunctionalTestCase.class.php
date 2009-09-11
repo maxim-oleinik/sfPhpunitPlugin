@@ -235,6 +235,12 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
         $result = $mess  . PHP_EOL . PHP_EOL
                 . 'Request: ' . $this->browser->getLastRequestUri() . PHP_EOL
                 . 'Request params: ' . $this->browser->getLastRequestParams();
+
+        if ($_FILES) {
+            $result .= PHP_EOL
+                    .  'Submited FILES: ' . var_export($_FILES, true);
+        }
+
         return $result;
     }
 

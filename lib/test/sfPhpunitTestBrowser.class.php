@@ -86,4 +86,34 @@ class sfPhpunitTestBrowser extends sfBrowser
         return $this->_lastRequestParams;
     }
 
+
+    /**
+     * Upload files
+     *
+     * When you can not use click() method and submit form with file
+     * or want to modify uploaded file params.
+     *
+     * Example:
+     *  $_FILES = array(
+     *      array(
+     *          'name'     => 'filename.jpg',
+     *          'type'     => 'image/jpeg'
+     *          'tmp_name' => '/tmp/filename.jpg'
+     *          'error'    => 0,
+     *          'size'     => 1000,
+     *      );
+     *  );
+     *
+     *  $this->browser
+     *       ->uploadFiles($_FILES);
+     *       ->post('/upload');
+     *
+     * @param  array $files - same as $_FILES array
+     * @return $this
+     */
+    public function uploadFiles(array $files)
+    {
+        $this->files = $files;
+        return $this;
+    }
 }
