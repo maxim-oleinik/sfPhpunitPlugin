@@ -195,32 +195,28 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
         if ($e instanceof PHPUnit_Framework_ExpectationFailedException) {
             if (!$e->getCustomMessage()) {
                 return new $className(
-                    $this->_makeRequestErrorMessage($e->getDescription()) . PHP_EOL,
+                    $this->_makeRequestErrorMessage($e->getDescription(), $e) . PHP_EOL,
                     $e->getComparisonFailure()
                 );
             } else {
                 return new $className(
                     $e->getDescription(),
                     $e->getComparisonFailure(),
-                    $this->_makeRequestErrorMessage($e->getCustomMessage()) . PHP_EOL
+                    $this->_makeRequestErrorMessage($e->getCustomMessage(), $e) . PHP_EOL
                 );
             }
 
         } else if ($e instanceof PHPUnit_Framework_Error) {
             return new $className(
-                $this->_makeRequestErrorMessage($e->getMessage()),
+                $this->_makeRequestErrorMessage($e->getMessage(), $e),
                 $e->getCode(),
                 $e->getFile(),
                 $e->getLine(),
                 $e->getTrace()
             );
-
-        } else {
-            return new $className(
-                $this->_makeRequestErrorMessage($e->getMessage()),
-                $e->getCode()
-            );
         }
+
+        return $e;
     }
 
 
@@ -230,16 +226,21 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
      * @param  string - User defined message
      * @return strung
      */
-    private function _makeRequestErrorMessage($mess)
+    private function _makeRequestErrorMessage($mess, Exception $e)
     {
         $result = $mess  . PHP_EOL . PHP_EOL
                 . 'Request: ' . $this->browser->getLastRequestUri() . PHP_EOL
-                . 'Request params: ' . $this->browser->getLastRequestParams();
+                . 'Request params: ' . PHP_EOL . $this->browser->getLastRequestParams();
 
         if ($_FILES) {
-            $result .= PHP_EOL
-                    .  'Submited FILES: ' . var_export($_FILES, true);
+            $result .= PHP_EOL . PHP_EOL
+                    .  'Submited FILES: '  . PHP_EOL
+                    .  var_export($_FILES, true);
         }
+
+        $result .= PHP_EOL . PHP_EOL
+                .  'Trace: ' . PHP_EOL
+                .  PHPUnit_Util_Filter::getFilteredStacktrace($e, false);
 
         return $result;
     }
