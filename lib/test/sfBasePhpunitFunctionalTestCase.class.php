@@ -69,6 +69,7 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
     {
     }
 
+
     /**
      * setUp method for PHPUnit
      *
@@ -79,23 +80,13 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
         $this->initializeContext();
 
         // autoloading ready, continue
-        $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPhpunitTest($this));
+        $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPhpunitTest($this), $this->getFunctionalTesters());
 
         // Initialize SCRIPT_NAME for correct work $this->generateUrl()
         // when $_SERVER is empty before first request
         $_SERVER['SCRIPT_NAME'] = '/index.php';
 
         $this->_start();
-    }
-
-    /**
-     * Returns the sfTestFunctional instance
-     *
-     * @return sfTestFunctional
-     */
-    public function getBrowser()
-    {
-        return $this->browser;
     }
 
 
@@ -107,6 +98,34 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
     {
         $this->_end();
     }
+
+
+    /**
+     * Inject your own functional testers
+     *
+     * @see sfTestFunctionalBase::setTesters()
+     *
+     * @return array
+     *          'request'  => 'sfTesterRequest',
+     *          'response' => 'sfTesterResponse',
+     *          'user'     => 'sfTesterUser',
+     */
+    protected function getFunctionalTesters()
+    {
+        return array();
+    }
+
+
+    /**
+     * Returns the sfTestFunctional instance
+     *
+     * @return sfTestFunctional
+     */
+    public function getBrowser()
+    {
+        return $this->browser;
+    }
+
 
     /**
      * Intializes the context for this test
