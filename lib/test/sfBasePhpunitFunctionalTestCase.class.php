@@ -1,5 +1,4 @@
 <?php
-require_once dirname(__FILE__).'/../../../../config/ProjectConfiguration.class.php';
 
 /**
  * sfBasePhpunitFunctionalTestCase is the super class for all functional
@@ -12,92 +11,14 @@ require_once dirname(__FILE__).'/../../../../config/ProjectConfiguration.class.p
  * @subpackage lib
  * @author     Frank Stelzer <dev@frankstelzer.de>
  */
-abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCase
+abstract class sfBasePhpunitFunctionalTestCase extends sfBasePhpunitTestCase
 {
-    /**
-     * The sfContext instance
-     *
-     * @var sfContext
-     */
-    private $context = null;
-
     /**
      * The sfTestFunctional instance
      *
      * @var sfTestFunctional
      */
     protected $browser;
-
-    /**
-     * Returns application name
-     *
-     * @return string
-     */
-    abstract protected function getApplication();
-
-
-    /**
-     * Returns environment name
-     *
-     * @return string
-     */
-    abstract protected function getEnvironment();
-
-    /**
-     * Returns if the test should be run in debug mode
-     *
-     * @return bool
-     */
-    protected function isDebug()
-    {
-        return true;
-    }
-
-    /**
-     * Dev hook for custom "setUp" stuff
-     *
-     */
-    protected function _start()
-    {
-    }
-
-    /**
-     * Dev hook for custom "tearDown" stuff
-     *
-     */
-    protected function _end()
-    {
-    }
-
-
-    /**
-     * setUp method for PHPUnit
-     *
-     */
-    protected function setUp()
-    {
-        // first we need the context and autoloading
-        $this->initializeContext();
-
-        // autoloading ready, continue
-        $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPhpunitTest($this), $this->getFunctionalTesters());
-
-        // Initialize SCRIPT_NAME for correct work $this->generateUrl()
-        // when $_SERVER is empty before first request
-        $_SERVER['SCRIPT_NAME'] = '/index.php';
-
-        $this->_start();
-    }
-
-
-    /**
-     * tearDown method for PHPUnit
-     *
-     */
-    protected function tearDown()
-    {
-        $this->_end();
-    }
 
 
     /**
@@ -117,6 +38,28 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
 
 
     /**
+     * SetUp method for PHPUnit
+     */
+    protected function setUp()
+    {
+        // Initialize SCRIPT_NAME for correct work $this->generateUrl()
+        // when $_SERVER is empty before first request
+        $_SERVER['SCRIPT_NAME'] = '/index.php';
+
+        // Create context once for current app
+        $this->getContext();
+
+        // Remove current app cache
+        sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
+
+        // Init test browser
+        $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPhpunitTest($this), $this->getFunctionalTesters());
+
+        $this->_start();
+    }
+
+
+    /**
      * Returns the sfTestFunctional instance
      *
      * @return sfTestFunctional
@@ -124,39 +67,6 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
     public function getBrowser()
     {
         return $this->browser;
-    }
-
-
-    /**
-     * Intializes the context for this test
-     *
-     */
-    private function initializeContext()
-    {
-        // only initialize the context one time
-        if(!$this->context)
-        {
-            $configuration = ProjectConfiguration::getApplicationConfiguration($this->getApplication(), $this->getEnvironment(), $this->isDebug());
-            sfContext::createInstance($configuration);
-
-            // remove all cache
-            sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
-        }
-    }
-
-    /*
-     * Returns sfContext instance
-     *
-     * @return sfContext
-     */
-    protected function getContext()
-    {
-        if(!$this->context)
-        {
-            $this->context = sfContext::getInstance();
-        }
-
-        return $this->context;
     }
 
 

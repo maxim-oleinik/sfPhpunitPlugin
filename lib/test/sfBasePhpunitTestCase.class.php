@@ -1,4 +1,5 @@
 <?php
+
 /**
  * sfBasePhpunitUnitTestCase is the super class for all unit
  * tests using PHPUnit.
@@ -9,78 +10,154 @@
  */
 abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
 {
-	/**
-	* The sfContext instance
-	*
-	* @var sfContext
-	*/
-	private $context = null;
+    /**
+     * The sfContext instance
+     *
+     * @var sfContext
+     */
+    private $context = null;
 
-	/**
-	 * Dev hook for custom "setUp" stuff
-	 * Overwrite it in your test class, if you have to execute stuff before a test is called.
-	 */
-	protected function _start()
-	{
-	}
+    /**
+     * Application name
+     *
+     * Overwrite it in your TestCase
+     */
+    protected $app = 'frontend';
 
-	/**
-	 * Dev hook for custom "tearDown" stuff
-	 * Overwrite it in your test class, if you have to execute stuff after a test is called.
-	 */
-	protected function _end()
-	{
-	}
-
-	/**
-	* Please do not touch this method and use _start directly!
-	*/
-	public function setUp()
-	{
-		$this->_start();
-	}
-
-	/**
-	* Please do not touch this method and use _end directly!
-	*/
-	public function tearDown()
-	{
-		$this->_end();
-	}
-
-	/**
-	* A unit test does not have loaded the whole symfony context on start-up, but
-	* you can create a working instance if you need it with this method
-	* (taken from the bootstrap file).
-	*
-	* @return sfContext
-	*/
-	protected function getContext()
-	{
-		if (!$this->context)
-		{
-			// ProjectConfiguration is already required in the bootstrap file
-			//require_once( dirname( __FILE__ ) . '/../../../config/ProjectConfiguration.class.php' );
-			$configuration = ProjectConfiguration::getApplicationConfiguration($this->getApplication(), $this->getEnvironment(), true);
-			$this->context = sfContext::createInstance($configuration);
-		}
-
-		return $this->context;
-	}
-
-	/**
-	* Returns application name
-	*
-	* @return string
-	*/
-	abstract protected function getApplication();
+    /**
+     * Environment name
+     *
+     * Overwrite it in your TestCase
+     */
+    protected $env = 'test';
 
 
-	/**
-	* Returns environment name
-	*
-	* @return string
-	*/
-	abstract protected function getEnvironment();
+    /**
+     * Returns database connection
+     */
+    abstract protected function getConnection();
+
+
+    /**
+     * Returns application name
+     *
+     * @return string
+     */
+    protected function getApplication()
+    {
+        return $this->app;
+    }
+
+
+    /**
+     * Returns environment name
+     *
+     * @return string
+     */
+    protected function getEnvironment()
+    {
+        return $this->env;
+    }
+
+
+    /**
+     * Returns true if the test should be run in debug mode
+     *
+     * @return bool
+     */
+    protected function isDebug()
+    {
+        return true;
+    }
+
+
+    /**
+     * Dev hook for custom "setUp" stuff
+     *
+     * Overwrite it in your test class, if you have to execute stuff before a test is called.
+     */
+    protected function _start()
+    {
+    }
+
+
+    /**
+     * Dev hook for custom "tearDown" stuff
+     *
+     * Overwrite it in your test class, if you have to execute stuff before a test is called.
+     */
+    protected function _end()
+    {
+    }
+
+
+    /**
+     * setUp method for PHPUnit
+     */
+    protected function setUp()
+    {
+        // Create context once for current app
+        $this->getContext();
+
+        $this->_start();
+    }
+
+
+    /**
+     * tearDown method for PHPUnit
+     */
+    protected function tearDown()
+    {
+        $this->_end();
+    }
+
+
+    /**
+     * Creates new context
+     */
+    protected function createContext()
+    {
+        $configuration = ProjectConfiguration::getApplicationConfiguration($this->getApplication(), $this->getEnvironment(), $this->isDebug());
+        return sfContext::createInstance($configuration);
+    }
+
+
+    /**
+     * Returns sfContext
+     *
+     * @return sfContext
+     */
+    protected function getContext()
+    {
+        $app = $this->getApplication();
+        if (sfContext::hasInstance($app)) {
+            return sfContext::getInstance($app);
+        } else {
+            return $this->createContext();
+        }
+    }
+
+
+    /**
+     * Wrap test with transaction
+     */
+    protected function runTest()
+    {
+        $conn = $this->getConnection();
+
+        if ($conn) {
+            $conn->beginTransaction();
+            try {
+                parent::runTest();
+            } catch (Exception $e) {
+                $conn->rollback();
+                throw $e;
+            }
+            $conn->rollback();
+
+        } else {
+            parent::runTest();
+        }
+    }
 
 }
