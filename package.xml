@@ -53,10 +53,17 @@
      <file role="data" name="sfPhpunitCreateTestTask.class.php" />
      <file role="data" name="sfPhpunitTestallTask.class.php" />
     </dir>
-    <dir name="task">
+     <!-- test classes -->
+    <dir name="test">
      <file role="data" name="sfBasePhpunitFunctionalTestCase.class.php" />
+     <file role="data" name="sfBasePhpunitTestCase.class.php" />
      <file role="data" name="sfPhpunitTest.class.php" />
     </dir>
+   </dir>
+     <!-- tests -->
+   <dir name="test">
+     <file role="data" name="sfPhpunitCreateFunctionalTestTaskTest.php" />
+     <file role="data" name="sfPhpunitCreateUnitTestTaskTest.php" />
    </dir>
   </dir>
  </contents>
@@ -96,10 +103,9 @@
       * Added functional test support with PHPUnit
       * Added functional test class generation support
       * Cleaned up template directory
-      * Added first unit tests for the plugin tasks
+      * Implemented first unit tests for the plugin tasks
       * Improved customization possibility of templates
       * Added more options to unit test generation task (class_path, class, base_test_name, file_suffix, skip_methods, skip_alltests). No model binding anymore!
-      * Implemented first unit tests for this plugin
     </notes>
   </release>
   <release>

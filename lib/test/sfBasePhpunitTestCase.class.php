@@ -73,18 +73,14 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
 	*
 	* @return string
 	*/
-	protected function getApplication()
-	{
-		throw new sfException('getApplication implementation is missing');
-	}
+	abstract protected function getApplication();
+
 
 	/**
 	* Returns environment name
 	*
 	* @return string
 	*/
-	protected function getEnvironment()
-	{
-		throw new sfException('getEnvironment implementation is missing');
-	}
+	abstract protected function getEnvironment();
+
 }

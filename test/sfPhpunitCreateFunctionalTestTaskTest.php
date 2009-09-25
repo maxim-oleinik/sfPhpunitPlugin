@@ -1,7 +1,7 @@
 <?php
 /*
  * Test for checking if the stub classes for functional tests are generated correctly from the tasks.
- * 
+ *
  * Run this test via:
  * php symfony test:unit sfPhpunitCreateFunctionalTestTask
  *
@@ -26,12 +26,12 @@ if(!function_exists('_syntax_check'))
 $application = 'testapp';
 $module = 'foo';
 $module2 = 'foo2';
-	
+
 // cleanup
 exec('rm -rf apps/'.$application);
 
 
-$t = new lime_test(18, new lime_output_color());
+$t = new lime_test(19, new lime_output_color());
 
 $dispatcher = new sfEventDispatcher();
 $formatter = new sfFormatter();
@@ -49,6 +49,7 @@ $testFile = sprintf($root.'/test/phpunit/functional/%s/%sActionsTest.php', $appl
 $baseTestFile2 = $root.'/test/phpunit/BaseSomeTestCase.class.php';
 $testFile2 = sprintf($root.'/test/phpunit/functional/%s/%sActionsTest.php', $application, $module2);
 
+$allTestsFile = $root.'/test/phpunit/AllPhpunitTests.php';
 
 // cleanup existing test files
 @unlink($bootstrapFile);
@@ -58,6 +59,7 @@ $testFile2 = sprintf($root.'/test/phpunit/functional/%s/%sActionsTest.php', $app
 @unlink($baseTestFile2);
 @unlink($testFile2);
 
+@unlink($allTestsFile);
 
 // --------------------------------------------
 // 1. functional test generation
@@ -98,6 +100,7 @@ $declaration = sprintf('abstract class %s extends sfBasePhpunitFunctionalTestCas
 $t->ok(strstr($content, $declaration), 'class declaration in base test class is ok');
 // END: check base class
 
+$t->ok(file_exists($allTestsFile), 'AllTests file is generated when it does not exist');
 
 // START: check test class
 $t->diag('testing test class file generation');
@@ -125,7 +128,7 @@ try
 	// take another module for this test
 
 	$arguments = array($application, $module2);
-	$options = array('overwrite', '--skip_alltests', '--skip_base_test', '--base_test_name='.$baseClass);
+	$options = array('overwrite', '--base_test_name='.$baseClass);
 
 	// create functional test file
 	// with default base class
@@ -168,19 +171,19 @@ $t->ok(_syntax_check($testFile), 'php syntax check is ok');
 
 
 // --------------------------------------------
-// 3.1 functional test generation (option test for "skip_alltests" and "skip_base_test")
+// 3.1 functional test generation (option test for "overwrite_alltests" and "overwrite_base_test")
 // --------------------------------------------
 $t->diag('3. functional test generation is running');
-$allTestsFile = $root.'/test/phpunit/AllPhpunitTests.php';
-@unlink($allTestsFile);
-@unlink($baseTestFile);
+// should not be overwritten now
+file_put_contents($allTestsFile, 'hello world');
+file_put_contents($baseTestFile, 'hello you');
 
 try
 {
 	// take another module for this test
 
 	$arguments = array($application, $module2);
-	$options = array('overwrite', '--skip_alltests', '--skip_base_test');
+	$options = array('overwrite');
 
 	// create functional test file
 	// with default base class
@@ -192,8 +195,12 @@ catch ( Exception $e )
 	$t->fail($e->getMessage());
 }
 
-$t->ok(file_exists($allTestsFile), 'AllTests file is generated when it does not exist, although the skip_alltests option is set');
-$t->ok(file_exists($baseTestFile), 'Base test file is generated when it does not exist, although the skip_base_test option is set');
+$content = file_get_contents($allTestsFile);
+$t->is('hello world', $content, 'generation of alltests is skipped, when overwrite_alltests option is not assigned');
+
+// content of $allTestsFile should not be overwritten here
+$content = file_get_contents($baseTestFile);
+$t->is('hello you', $content, 'generation of base test is skipped, when overwrite_base_test option is not assigned');
 
 
 // --------------------------------------------
@@ -207,7 +214,7 @@ try
 	// take another module for this test
 
 	$arguments = array($application, $module2);
-	$options = array('overwrite', '--skip_alltests', '--skip_base_test');
+	$options = array('overwrite', '--overwrite_alltests', '--overwrite_base_test');
 
 	// create functional test file
 	// with default base class
@@ -219,11 +226,20 @@ catch ( Exception $e )
 	$t->fail($e->getMessage());
 }
 
-// content of $allTestsFile should not be overwritten here
+// content of $allTestsFile should be overwritten here
 $content = file_get_contents($allTestsFile);
-$t->ok($content == 'hello world', 'skip_alltests option is working');
+$t->isnt('hello world', $content, 'overwrite_alltests option is working');
 
-// content of $allTestsFile should not be overwritten here
+// content of $allTestsFile should be overwritten here
 $content = file_get_contents($baseTestFile);
-$t->ok($content == 'hello you', 'skip_base_test option is working');
+$t->isnt('hello you', $content, 'overwrite_base_test option is working');
+
+
+// cleanup again
+exec('rm -rf apps/'.$application);
+exec('rm -rf test/functional/'.$application);
+exec('rm -rf test/phpunit/functional/'.$application);
+@unlink($baseTestFile2);
+
+
 

@@ -1,4 +1,6 @@
 <?php
+require_once dirname(__FILE__).'/../../../../config/ProjectConfiguration.class.php';
+
 /**
  * sfBasePhpunitFunctionalTestCase is the super class for all functional
  * tests using PHPUnit.
@@ -19,12 +21,38 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
 	 */
 	private $context = null;
 
+
 	/**
 	 * The sfBrowser instance
 	 *
 	 * @var sfBrowser
 	 */
 	private $testBrowser;
+
+	/**
+	* Returns application name
+	*
+	* @return string
+	*/
+	abstract protected function getApplication();
+
+
+	/**
+	* Returns environment name
+	*
+	* @return string
+	*/
+	abstract protected function getEnvironment();
+
+	/**
+	 * Returns if the test should be run in debug mode
+	 *
+	 * @return bool
+	 */
+	protected function isDebug()
+	{
+		return true;
+	}
 
 	/**
 	 * Dev hook for custom "setUp" stuff
@@ -48,8 +76,12 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
 	 */
 	protected function setUp()
 	{
-		#$this->testBrowser = new sfPhpunitTestFunctional(new sfBrowser(), $this );
+		// first we need the context and autoloading
+		$this->initializeContext();
+
+		// autoloading ready, continue
 		$this->testBrowser = new sfTestFunctional(new sfBrowser(), new sfPhpunitTest($this));
+
 		$this->_start();
 	}
 
@@ -72,6 +104,23 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
 		$this->_end();
 	}
 
+	/**
+	 * Intializes the context for this test
+	 *
+	 */
+	private function initializeContext()
+	{
+		// only initialize the context one time
+		if(!$this->context)
+		{
+			$configuration = ProjectConfiguration::getApplicationConfiguration($this->getApplication(), $this->getEnvironment(), $this->isDebug());
+			sfContext::createInstance($configuration);
+
+			// remove all cache
+			sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
+		}
+	}
+
 	/*
 	 * Returns sfContext instance
 	 *
@@ -79,9 +128,6 @@ abstract class sfBasePhpunitFunctionalTestCase extends PHPUnit_Framework_TestCas
 	 */
 	protected function getContext()
 	{
-		// The sfContext instance is already created in the functional bootstrap file.
-		// Therefore we have to fetch only the instance here.
-		// Dependency injection would be best, but there is no clean way to do that in this case.
 		if(!$this->context)
 		{
 			$this->context = sfContext::getInstance();

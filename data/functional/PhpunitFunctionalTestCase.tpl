@@ -9,11 +9,29 @@ require_once dirname(__FILE__).'/../../{baseTestName}.class.php';
 */
 class {testName} extends {baseTestName}
 {
+	/**
+	* Returns application name for this test case. Needed for context creation.
+	*/
+	public function getApplication()
+	{
+		return '{application}';
+	}
 
+	/**
+	* Returns environment name for this test case. Needed for context creation.
+	*/
+	public function getEnvironment()
+	{
+		return 'test';
+	}
+
+	/**
+	* First test method
+	*/
 	public function test1()
 	{
 		$browser = $this->getBrowser();
-		
+
 		$browser->
 		get('/{moduleName}/index')->
 
@@ -28,5 +46,7 @@ class {testName} extends {baseTestName}
 		end()
 		;
 	}
-	
+
+
+
 }

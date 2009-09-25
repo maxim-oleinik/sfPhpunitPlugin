@@ -1,7 +1,7 @@
 <?php
 /*
- * Test for checking if the stub classes for unit tests are generated correctly from the tasks. 
- * 
+ * Test for checking if the stub classes for unit tests are generated correctly from the tasks.
+ *
  * Run this test via:
  * php symfony test:unit sfPhpunitCreateUnitTestTask
  *
@@ -26,7 +26,7 @@ $module = 'foo';
 $module2 = 'foo2';
 
 
-$t = new lime_test(14, new lime_output_color());
+$t = new lime_test(13, new lime_output_color());
 
 $dispatcher = new sfEventDispatcher();
 $formatter = new sfFormatter();
@@ -43,6 +43,8 @@ $baseTestClass = $root.'/test/phpunit/BasePhpunitTestCase.class.php';
 // all unit tests are saved in the unit subfolder
 $testClass = $root.'/test/phpunit/unit/sfPhpunitPluginTestClassTest.php';
 $testClass2 = $root.'/test/phpunit/unit/subfolder/sfPhpunitPluginTestClassTest.php';
+$allTestsFile = $root.'/test/phpunit/AllPhpunitTests.php';
+
 
 $customTemplateSource = $root.'/plugins/sfPhpunitPlugin/data/test/file.tpl';
 $customTemplateDir = $root.'/data/sfPhpunitPlugin/unit';
@@ -56,6 +58,7 @@ $customTemplate = $customTemplateDir.'/file.tpl';
 @unlink($bootstrapFile);
 @unlink($baseTestClass);
 @unlink($customTemplate);
+@unlink($allTestsFile);
 // @unlink($testClass);
 // @unlink($testClass2);
 
@@ -95,6 +98,8 @@ $t->ok(_syntax_check($bootstrapFile), 'php syntax check of bootstrap file is ok'
 $t->ok(file_exists($baseTestClass), 'generated base test class exists');
 $t->ok(_syntax_check($baseTestClass), 'php syntax check of base test class is ok');
 // END: check base class
+
+$t->ok(file_exists($allTestsFile), 'AllTests file is generated when it does not exist, although the skip_alltests option is set');
 
 // START: check test class
 $t->ok(file_exists($testClass), 'generated unit test file exists');
@@ -147,14 +152,12 @@ $t->ok(strstr($content, "This is a custom template"), 'task uses custom template
 // --------------------------------------------
 // 3. unit test generation (target test)
 // --------------------------------------------
-$allTestsFile = $root.'/test/phpunit/AllPhpunitTests.php';
-@unlink($allTestsFile);
 @unlink($baseTestClass);
 
 try
 {
 	$arguments = array($application);
-	$options = array('overwrite', '--skip_alltests', '--skip_base_test', '--target=subfolder', '--class=sfPhpunitPluginTestClass', '--class_path=lib');
+	$options = array('overwrite', '--overwrite_alltests', '--overwrite_base_test', '--target=subfolder', '--class=sfPhpunitPluginTestClass', '--class_path=lib');
 
 	// create functional test file
 	// with default base class
@@ -171,5 +174,11 @@ if (!$content = file_get_contents($testClass2))
 	$t->fail('could not load test file');
 }
 $t->ok(strstr($content, "realpath(dirname(__FILE__).'/../..')"), 'relative path is ok');
-$t->ok(file_exists($allTestsFile), 'AllTests file is generated when it does not exist, although the skip_alltests option is set');
-$t->ok(file_exists($baseTestClass), 'Base test file is generated when it does not exist, although the skip_base_test option is set');
+
+
+// cleanup again
+exec('rm -rf apps/'.$application);
+exec('rm -rf data/sfPhpunitPlugin/');
+exec('rm -rf test/functional/'.$application);
+exec('rm -rf test/phpunit/unit/subfolder');
+exec('rm -f '.$testClass);

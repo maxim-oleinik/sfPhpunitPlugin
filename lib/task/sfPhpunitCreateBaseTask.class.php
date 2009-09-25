@@ -102,8 +102,8 @@ abstract class sfPhpunitCreateBaseTask extends sfBaseTask
 	{
 		$fname = sfConfig::get('sf_test_dir').DIRECTORY_SEPARATOR.'phpunit'.DIRECTORY_SEPARATOR.$targetName.'.class.php';
 
-		// skipping generation of base test makes only sense, when file already exists
-		if($options['skip_base_test'] && file_exists($fname))
+		// overwrite base test only, if file does already exist and according option is defined
+		if(!$options['overwrite_base_test'] && file_exists($fname))
 		{
 			return true;
 		}
@@ -138,8 +138,8 @@ abstract class sfPhpunitCreateBaseTask extends sfBaseTask
 			$fname = sfConfig::get('sf_test_dir').DIRECTORY_SEPARATOR.'phpunit'.DIRECTORY_SEPARATOR.$fname;
 		}
 
-		// skipping the alltests generation makes only sense, when the file already exists
-		if ($options['skip_alltests'] && file_exists($fname))
+		// overwrite all test file only, if file does already exist and according option is defined
+		if (!$options['overwrite_alltests'] && file_exists($fname))
 		{
 			return true;
 		}

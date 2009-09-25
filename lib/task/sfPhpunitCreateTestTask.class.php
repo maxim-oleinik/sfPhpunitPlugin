@@ -53,11 +53,11 @@ class sfPhpunitCreateTestTask extends sfPhpunitCreateBaseTask
 		new sfCommandOption('class_path', 'l', sfCommandOption::PARAMETER_REQUIRED, 'Path to look for class files', ''),
 		new sfCommandOption('skip_methods', 's', sfCommandOption::PARAMETER_OPTIONAL, 'List of methods to skip (multiple methods separated by comma)', ''),
 		new sfCommandOption('alltests', 'a', sfCommandOption::PARAMETER_OPTIONAL, 'Create AllTests class file', 'AllPhpunitTests.php'),
-		new sfCommandOption('skip_alltests', null, sfCommandOption::PARAMETER_NONE, 'Flag if the generation of the AllTests class should be ignored'),
+		new sfCommandOption('overwrite_alltests', null, sfCommandOption::PARAMETER_NONE, 'Flag if the contents of the AllTests class should be overwritten'),
 		new sfCommandOption('overwrite', 'w', sfCommandOption::PARAMETER_NONE, 'Overwrite existing test files (Default: no)'),
 		new sfCommandOption('verbose', 'v', sfCommandOption::PARAMETER_NONE, 'Print extra information'),
 		new sfCommandOption('base_test_name', null, sfCommandOption::PARAMETER_REQUIRED, 'Class name of base test class', 'BasePhpunitTestCase' ),
-		new sfCommandOption('skip_base_test', null, sfCommandOption::PARAMETER_NONE, 'Flag if the generation of base test class should be skipped'),
+		new sfCommandOption('overwrite_base_test', null, sfCommandOption::PARAMETER_NONE, 'Flag if the content of base test class should be overwritten'),
 		new sfCommandOption('file_suffix', 'x', sfCommandOption::PARAMETER_REQUIRED, 'File suffix/extension, only needed if type option is not defined', '' ),
 		));
 
