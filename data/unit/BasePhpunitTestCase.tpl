@@ -1,39 +1,38 @@
 <?php
-require_once dirname(__FILE__).'/bootstrap/unit.php';
 
+/**
+ * Base test class for all unit tests
+ */
 abstract class {baseTestClassName} extends sfBasePhpunitTestCase
 {
-	/**
-	 * Dev hook for custom "setUp" stuff
-	 */
-	protected function _start()
-	{
-	}
+    /**
+     * SetUp
+     */
+    final public function setUp()
+    {
+        parent::setUp();
 
-	/**
-	 * Dev hook for custom "tearDown" stuff
-	 */
-	protected function _end()
-	{
-	}
+        // Your code
+    }
 
-	/**
-	* Returns application name
-	*
-	* @return string
-	*/
-	protected function getApplication()
-	{
-		return '{application}';
-	}
 
-	/**
-	* Returns environment name
-	*
-	* @return string
-	*/
-	protected function getEnvironment()
-	{
-		return '{env}';
-	}
+    /**
+     * TearDown
+     */
+    final public function tearDown()
+    {
+        // Your code
+
+        parent::tearDown();
+    }
+
+
+    /**
+     * Returns database connection to wrap tests with transaction
+     */
+    protected function getConnection()
+    {
+        // return Doctrine_Manager::getInstance()->getConnection('doctrine');
+    }
+
 }

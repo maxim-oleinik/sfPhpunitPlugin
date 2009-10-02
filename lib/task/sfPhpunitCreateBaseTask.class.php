@@ -40,6 +40,10 @@ abstract class sfPhpunitCreateBaseTask extends sfBaseTask
 			throw new sfCommandException(sprintf('%s template file is empty.', $templateFile));
 		}
 
+        $dir = dirname($fileName);
+        if (!file_exists($dir)) {
+            mkdir($dir, 0755, true);
+        }
 		if (!$fp = fopen($fileName, 'w'))
 		{
 			throw new sfCommandException(sprintf('Failed to open %s for writing', basename($fileName)));
@@ -100,17 +104,22 @@ abstract class sfPhpunitCreateBaseTask extends sfBaseTask
 	 */
 	protected function createBaseTestCaseClassFile(array $options, $templateName, $targetName)
 	{
-		$fname = sfConfig::get('sf_test_dir').DIRECTORY_SEPARATOR.'phpunit'.DIRECTORY_SEPARATOR.$targetName.'.class.php';
+		$libDir = sfConfig::get('sf_lib_dir').DIRECTORY_SEPARATOR.'test';
+		if (!file_exists($libDir)) {
+			mkdir($libDir, 0755, true);
+		}
+		$fname = $libDir.DIRECTORY_SEPARATOR.$targetName.'.php';
 
 		// overwrite base test only, if file does already exist and according option is defined
-		if(!$options['overwrite_base_test'] && file_exists($fname))
-		{
+		if (!$options['overwrite'] && file_exists($fname)) {
+			if ($options['verbose'])
+			{
+				$this->logSection('phpunit', sprintf('Skipped existing file %s', $fname));
+			}
 			return true;
 		}
 
 		$vars = array(
-			'application' => $options['application'],
-			'env' => $options['env'],
 			'baseTestClassName' => $targetName
 		);
 
@@ -131,24 +140,15 @@ abstract class sfPhpunitCreateBaseTask extends sfBaseTask
 	 */
 	protected function createAllTestFile(array $options)
 	{
-		$fname = $options['alltests'];
-
-		if ($fname[0] != DIRECTORY_SEPARATOR)
-		{
-			$fname = sfConfig::get('sf_test_dir').DIRECTORY_SEPARATOR.'phpunit'.DIRECTORY_SEPARATOR.$fname;
-		}
+		$fname = sfConfig::get('sf_test_dir').DIRECTORY_SEPARATOR.'AllPhpunitTests.php';
 
 		// overwrite all test file only, if file does already exist and according option is defined
-		if (!$options['overwrite_alltests'] && file_exists($fname))
-		{
+		if (!$options['overwrite'] && file_exists($fname)) {
 			return true;
 		}
 
 		$vars = array(
-    'application' => $options['application'],
-    'env' => $options['env'],
     'target' => '',
-    'connection' => $options['connection'],
 		);
 
 		if ($this->createFile($fname, 'alltests', $vars, $options))
@@ -167,18 +167,17 @@ abstract class sfPhpunitCreateBaseTask extends sfBaseTask
 	 *
 	 * @return bool
 	 */
-	protected function createBootstrapFile($type, array $options)
+	protected function createBootstrapFile($templateName, array $options)
 	{
-		$bootstrapDir = sfConfig::get('sf_test_dir').DIRECTORY_SEPARATOR.'phpunit'.DIRECTORY_SEPARATOR.'bootstrap';
+		$bootstrapDir = sfConfig::get('sf_test_dir').DIRECTORY_SEPARATOR.'bootstrap';
 		if (!file_exists($bootstrapDir))
 		{
 			mkdir($bootstrapDir);
 		}
-		$templateName = $type.DIRECTORY_SEPARATOR.$type;
-		$target = $bootstrapDir.DIRECTORY_SEPARATOR.$type.'.php';
+		$templateName = 'bootstrap';
+		$target = $bootstrapDir.DIRECTORY_SEPARATOR.'all.php';
 
-		$vars = array('application' => $options['application']);
-		return $this->createFile($target, $templateName, $vars, $options );
+		return $this->createFile($target, $templateName, array(), $options);
 	}
 
 	/**

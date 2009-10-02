@@ -56,7 +56,7 @@ class sfPhpunitCreateTestTask extends sfPhpunitCreateBaseTask
 		new sfCommandOption('overwrite_alltests', null, sfCommandOption::PARAMETER_NONE, 'Flag if the contents of the AllTests class should be overwritten'),
 		new sfCommandOption('overwrite', 'w', sfCommandOption::PARAMETER_NONE, 'Overwrite existing test files (Default: no)'),
 		new sfCommandOption('verbose', 'v', sfCommandOption::PARAMETER_NONE, 'Print extra information'),
-		new sfCommandOption('base_test_name', null, sfCommandOption::PARAMETER_REQUIRED, 'Class name of base test class', 'BasePhpunitTestCase' ),
+		new sfCommandOption('base_test_name', null, sfCommandOption::PARAMETER_REQUIRED, 'Class name of base test class', 'myUnitTestCase' ),
 		new sfCommandOption('overwrite_base_test', null, sfCommandOption::PARAMETER_NONE, 'Flag if the content of base test class should be overwritten'),
 		new sfCommandOption('file_suffix', 'x', sfCommandOption::PARAMETER_REQUIRED, 'File suffix/extension, only needed if type option is not defined', '' ),
 		));
@@ -76,7 +76,7 @@ EOF;
 	protected function execute($arguments = array(), $options = array())
 	{
 		// create base phpunit dir
-		$phpunitDir= sfConfig::get('sf_test_dir').'/phpunit';
+		$phpunitDir= sfConfig::get('sf_test_dir').'/';
 		if (!file_exists($phpunitDir))
 		{
 			if (!mkdir($phpunitDir))
@@ -229,7 +229,7 @@ EOF;
 			$arguments['libpath'] = sfConfig::get('sf_root_dir').DIRECTORY_SEPARATOR.$arguments['libpath'];
 		}
 
-		$targetDir = sfConfig::get('sf_test_dir').'/phpunit/unit';
+		$targetDir = sfConfig::get('sf_test_dir').'/unit';
 
 		if (!file_exists($targetDir))
 		{

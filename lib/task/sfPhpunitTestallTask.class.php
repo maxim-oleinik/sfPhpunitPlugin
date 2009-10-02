@@ -24,9 +24,9 @@ class sfPhpunitTestallTask extends sfBaseTask
             new sfCommandOption('isolate', 'i',  sfCommandOption::PARAMETER_OPTIONAL, 'Run tests in separate (parallel) processes', 'off'),
         ));
 
-        $this->detailedDescription = <<<EOF
-The [phpunit:testall] task Runs PHPUnit AllTests
-EOF;
+        $this->detailedDescription = trim("
+            The [phpunit:testall] task Runs PHPUnit AllTests
+        ");
     }
 
 
@@ -36,9 +36,8 @@ EOF;
     protected function execute($arguments = array(), $options = array())
     {
         $isolate = ('on' == $options['isolate']) ? '--process-isolation' : '';
-        $file    = $options['kind'] . $options['name'] . '.php';
+        $file    = sfConfig::get('sf_test_dir') . '/' . $options['kind'] . $options['name'] . '.php';
 
-        chdir('test/phpunit');
         passthru("phpunit {$isolate} {$file}");
     }
 
