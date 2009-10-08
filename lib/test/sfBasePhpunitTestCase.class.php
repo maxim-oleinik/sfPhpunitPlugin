@@ -109,6 +109,11 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         $this->_end();
+
+        // Reset Models cache
+        foreach (Doctrine::getLoadedModels() as $modelName) {
+            Doctrine::getTable($modelName)->clear();
+        }
     }
 
 
