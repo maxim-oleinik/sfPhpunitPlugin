@@ -32,7 +32,7 @@ abstract class {baseTestClassName} extends sfBasePhpunitFunctionalTestCase
      */
     protected function getConnection()
     {
-        // return Doctrine_Manager::getInstance()->getConnection('doctrine');
+        return Doctrine_Manager::getInstance()->getConnection('doctrine');
     }
 
 
