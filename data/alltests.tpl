@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__FILE__).'/../config/ProjectConfiguration.class.php');
+require_once(dirname(__FILE__).'/bootstrap/all.php');
 
 
 class AllTests extends PHPUnit_Framework_TestSuite
@@ -11,6 +11,18 @@ class AllTests extends PHPUnit_Framework_TestSuite
      */
     public function setUp()
     {
+        // Clear logs
+        sfToolkit::clearDirectory(sfConfig::get('sf_log_dir'));
+
+        // Rebuild DB
+        $task = new sfDoctrineRebuildDbTask(new sfEventDispatcher, new sfFormatter);
+        $task->run($args = array(), $options = array(
+            '--env=test',
+            '--no-confirmation',
+        ));
+
+        // Load test fixtures
+        Doctrine::loadData(sfConfig::get('sf_test_dir').'/fixtures');
     }
 
 
