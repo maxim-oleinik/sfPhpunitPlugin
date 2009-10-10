@@ -21,7 +21,7 @@ class sfPhpunitTestallTask extends sfBaseTask
         $this->addOptions(array(
             new sfCommandOption('kind',    'k', sfCommandOption::PARAMETER_OPTIONAL, 'The folder to test', ''),
             new sfCommandOption('name',    'a', sfCommandOption::PARAMETER_REQUIRED, 'The test file name', 'AllPhpunitTests'),
-            new sfCommandOption('isolate', 'i',  sfCommandOption::PARAMETER_OPTIONAL, 'Run tests in separate (parallel) processes', 'off'),
+            new sfCommandOption('isolate', 'i', sfCommandOption::PARAMETER_NONE,     'Run tests in separate (parallel) processes'),
         ));
 
         $this->detailedDescription = trim("
@@ -35,7 +35,7 @@ class sfPhpunitTestallTask extends sfBaseTask
      */
     protected function execute($arguments = array(), $options = array())
     {
-        $isolate = ('on' == $options['isolate']) ? '--process-isolation' : '';
+        $isolate = ($options['isolate']) ? '--process-isolation' : '';
         $file    = sfConfig::get('sf_test_dir') . '/' . $options['kind'] . $options['name'] . '.php';
 
         passthru("phpunit {$isolate} {$file}");
