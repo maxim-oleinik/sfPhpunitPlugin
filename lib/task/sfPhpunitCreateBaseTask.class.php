@@ -37,7 +37,7 @@ abstract class sfPhpunitCreateBaseTask extends sfBaseTask
 
 		if (empty($tpl))
 		{
-			throw new sfCommandException(sprintf('%s template file is empty.', $templateFile));
+			throw new sfCommandException(sprintf('%s template file is empty.', $fileName));
 		}
 
         $dir = dirname($fileName);
