@@ -31,6 +31,11 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
      */
     protected $env = 'test';
 
+    /**
+     * myTestObjectHelper
+     */
+    protected $helper;
+
 
     /**
      * Returns database connection
@@ -98,6 +103,9 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
     {
         // Create context once for current app
         $this->getContext();
+
+        // Object helper
+        $this->helper = sfBaseTestObjectHelper::getInstance();
 
         $this->_start();
     }

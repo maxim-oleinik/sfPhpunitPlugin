@@ -38,6 +38,7 @@ class sfPhpunitInitTestTask extends sfPhpunitCreateBaseTask
         $this->createAllTestFile($options);
         $this->createBaseTestCaseClassFile($options, 'unit/BasePhpunitTestCase', 'myUnitTestCase');
         $this->createBaseTestCaseClassFile($options, 'functional/BasePhpunitFunctionalTestCase', 'myFunctionalTestCase');
+        $this->createBaseTestCaseClassFile($options, 'myTestObjectHelper', 'myTestObjectHelper');
 
         // Unit example
         $file = sfConfig::get('sf_test_dir').'/unit/ExampleTest.php';
