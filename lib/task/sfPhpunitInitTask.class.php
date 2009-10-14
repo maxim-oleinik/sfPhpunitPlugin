@@ -15,8 +15,9 @@ class sfPhpunitInitTestTask extends sfPhpunitCreateBaseTask
     protected function configure()
     {
         $this->addOptions(array(
-            new sfCommandOption('overwrite', 'o', sfCommandOption::PARAMETER_NONE, 'Overwrite existing test files (Default: no)'),
-            new sfCommandOption('verbose',   'v', sfCommandOption::PARAMETER_NONE, 'Print extra information'),
+            new sfCommandOption('overwrite',  'o', sfCommandOption::PARAMETER_NONE, 'Overwrite existing test files (Default: no)'),
+            new sfCommandOption('verbose',    'v', sfCommandOption::PARAMETER_NONE, 'Print extra information'),
+            new sfCommandOption('no-example', 'e', sfCommandOption::PARAMETER_NONE, 'Do not create example files'),
         ));
 
         $this->namespace = 'phpunit';
@@ -40,16 +41,18 @@ class sfPhpunitInitTestTask extends sfPhpunitCreateBaseTask
         $this->createBaseTestCaseClassFile($options, 'functional/BasePhpunitFunctionalTestCase', 'myFunctionalTestCase');
         $this->createBaseTestCaseClassFile($options, 'myTestObjectHelper', 'myTestObjectHelper');
 
-        // Unit example
-        $file = sfConfig::get('sf_test_dir').'/unit/ExampleTest.php';
-        if ($this->createFile($file, 'unit/example', array(), $options)) {
-            $this->logSection('phpunit', sprintf('Created %s file.', $file));
-        }
+        if (!$options['no-example']) {
+            // Unit example
+            $file = sfConfig::get('sf_test_dir').'/unit/ExampleTest.php';
+            if ($this->createFile($file, 'unit/example', array(), $options)) {
+                $this->logSection('phpunit', sprintf('Created %s file.', $file));
+            }
 
-        // Functional example
-        $file = sfConfig::get('sf_test_dir').'/functional/frontend/ExampleModuleActionTest.php';
-        if ($this->createFile($file, 'functional/example', array(), $options)) {
-            $this->logSection('phpunit', sprintf('Created %s file.', $file));
+            // Functional example
+            $file = sfConfig::get('sf_test_dir').'/functional/frontend/ExampleModuleActionTest.php';
+            if ($this->createFile($file, 'functional/example', array(), $options)) {
+                $this->logSection('phpunit', sprintf('Created %s file.', $file));
+            }
         }
 
         return true;
