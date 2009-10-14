@@ -71,7 +71,7 @@ class sfBaseTestObjectHelper
      */
     protected function _makeText($text)
     {
-        return sprintf('%s %d</html>', $text, $this->getUniqueCounter());
+        return sprintf('%s %04d</html>', $text, $this->getUniqueCounter());
     }
 
 }
