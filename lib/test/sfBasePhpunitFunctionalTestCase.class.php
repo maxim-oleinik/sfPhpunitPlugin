@@ -55,6 +55,9 @@ abstract class sfBasePhpunitFunctionalTestCase extends sfBasePhpunitTestCase
         // Init test browser
         $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPhpunitTest($this), $this->getFunctionalTesters());
 
+        // Object helper
+        $this->helper = sfBaseTestObjectHelper::getInstance();
+
         $this->_start();
     }
 
