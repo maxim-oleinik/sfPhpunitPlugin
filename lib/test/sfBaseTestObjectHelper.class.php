@@ -8,9 +8,9 @@ class sfBaseTestObjectHelper
     /**
      * Singleton
      */
-    private static $_instance = null;
-    private function __construct() {}
-    private function __clone() {}
+    protected static $_instance = null;
+    protected function __construct() {}
+    protected function __clone() {}
 
 
     /**
