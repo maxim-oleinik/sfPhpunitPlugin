@@ -69,7 +69,7 @@ class sfBaseTestObjectHelper
      * @param  string $text
      * @return string
      */
-    protected function _makeText($text)
+    public function makeText($text)
     {
         return sprintf('%s %04d</html>', $text, $this->getUniqueCounter());
     }
