@@ -46,8 +46,8 @@ abstract class sfBasePhpunitFunctionalTestCase extends sfBasePhpunitTestCase
         // when $_SERVER is empty before first request
         $_SERVER['SCRIPT_NAME'] = '/index.php';
 
-        // Create context once for current app
-        $this->getContext();
+        // Create context for current app
+        $this->createContext();
 
         // Remove current app cache
         sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
@@ -59,6 +59,16 @@ abstract class sfBasePhpunitFunctionalTestCase extends sfBasePhpunitTestCase
         $this->helper = sfBaseTestObjectHelper::getInstance();
 
         $this->_start();
+    }
+
+
+    /**
+     * tearDown method for PHPUnit
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
+        sfConfig::clear();
     }
 
 
