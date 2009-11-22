@@ -189,7 +189,7 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
     public function assertModels(Doctrine_Record $expected, Doctrine_Record $actual, $message = null)
     {
         $this->assertEquals(get_class($expected), get_class($actual), $message);
-        $this->assertEquals($expected->toArray(), $actual->toArray(), $message);
+        $this->assertEquals($expected->toArray(false), $actual->toArray(false), $message);
     }
 
 }
