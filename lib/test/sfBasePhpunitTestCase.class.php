@@ -97,6 +97,14 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
 
 
     /**
+     * Custiom setup initialization
+     */
+    protected function _initialize()
+    {
+    }
+
+
+    /**
      * setUp method for PHPUnit
      */
     protected function setUp()
@@ -106,6 +114,14 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
 
         // Object helper
         $this->helper = sfBaseTestObjectHelper::getInstance();
+
+        // Custom init
+        $this->_initialize();
+
+        // Begin transaction
+        if ($conn = $this->getConnection()) {
+            $conn->beginTransaction();
+        }
 
         $this->_start();
     }
@@ -117,6 +133,12 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         $this->_end();
+
+        // Rollback transaction
+        if ($conn = $this->getConnection()) {
+            $conn->rollback();
+        }
+
         $this->clearModelsCache();
     }
 
@@ -156,29 +178,6 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
             return sfContext::getInstance($app);
         } else {
             return $this->createContext();
-        }
-    }
-
-
-    /**
-     * Wrap test with transaction
-     */
-    protected function runTest()
-    {
-        $conn = $this->getConnection();
-
-        if ($conn) {
-            $conn->beginTransaction();
-            try {
-                parent::runTest();
-            } catch (Exception $e) {
-                $conn->rollback();
-                throw $e;
-            }
-            $conn->rollback();
-
-        } else {
-            parent::runTest();
         }
     }
 
