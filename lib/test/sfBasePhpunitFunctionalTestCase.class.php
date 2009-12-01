@@ -57,7 +57,7 @@ abstract class sfBasePhpunitFunctionalTestCase extends sfBasePhpunitTestCase
         sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
 
         // Init test browser
-        $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPhpunitTest($this), $this->getFunctionalTesters());
+        $this->browser = new sfPHPunitFunctionalTestBrowser(new sfPhpunitTestBrowser, new sfPhpunitTest($this), $this->getFunctionalTesters());
 
     }
 

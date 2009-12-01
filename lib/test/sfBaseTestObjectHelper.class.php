@@ -2,29 +2,21 @@
 
 /**
  * Test helper for creating model objects
+ *
+ * @package    sfPhpunitPlugin
+ * @author     Maxim Oleinik <maxim.oleinik@gmail.com>
  */
 class sfBaseTestObjectHelper
 {
     /**
-     * Singleton
+     * Unique counter
      */
-    protected static $_instance = null;
-    protected function __construct() {}
-    protected function __clone() {}
-
+    protected static $_counter = 0;
 
     /**
-     * Get Instance
-     *
-     * @return myTestObjectHelper
+     * Safe classes
      */
-    public static function getInstance()
-    {
-        if (null === self::$_instance) {
-            self::$_instance = new myTestObjectHelper;
-        }
-        return self::$_instance;
-    }
+    protected $_safe = array();
 
 
     /**
@@ -34,8 +26,31 @@ class sfBaseTestObjectHelper
      */
     public function getUniqueCounter()
     {
-        static $counter = 0;
-        return ++$counter;
+        return ++self::$_counter;
+    }
+
+
+    /**
+     * Init safe classes
+     *
+     * @param  array $safe
+     * @return void
+     */
+    public function setSafe(array $safe)
+    {
+        $this->_safe = $safe;
+    }
+
+
+    /**
+     * Is class safe
+     *
+     * @param  string $item
+     * @return bool
+     */
+    public function isSafe($item)
+    {
+        return in_array($item, $this->_safe);
     }
 
 
@@ -69,9 +84,14 @@ class sfBaseTestObjectHelper
      * @param  string $text
      * @return string
      */
-    public function makeText($text)
+    public function makeText($text, $item = null)
     {
-        return sprintf('%s %04d</html>', $text, $this->getUniqueCounter());
+        $template = '%s %04d';
+        if (!$item || !$this->isSafe($item)) {
+            $template = "<span class=\"xss\">{$template}</span>";
+        }
+
+        return sprintf($template, $text, $this->getUniqueCounter());
     }
 
 }

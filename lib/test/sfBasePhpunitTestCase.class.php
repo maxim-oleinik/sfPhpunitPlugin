@@ -5,18 +5,10 @@
  * tests using PHPUnit.
  *
  * @package    sfPhpunitPlugin
- * @subpackage lib
- * @author     Frank Stelzer <dev@frankstelzer.de>
+ * @author     Maxim Oleinik <maxim.oleinik@gmail.com>
  */
 abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
 {
-    /**
-     * The sfContext instance
-     *
-     * @var sfContext
-     */
-    private $context = null;
-
     /**
      * Application name
      *
@@ -41,6 +33,14 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
      * Returns database connection
      */
     abstract protected function getConnection();
+
+
+    /**
+     * Creates new helper
+     *
+     * @return sfBaseTestObjectHelper
+     */
+    abstract protected function makeHelper();
 
 
     /**
@@ -109,11 +109,8 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        // Create context once for current app
-        $this->getContext();
-
         // Object helper
-        $this->helper = sfBaseTestObjectHelper::getInstance();
+        $this->helper = $this->makeHelper();
 
         // Custom init
         $this->_initialize();

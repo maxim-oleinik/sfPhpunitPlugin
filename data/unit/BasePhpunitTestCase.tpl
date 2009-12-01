@@ -35,4 +35,15 @@ abstract class {baseTestClassName} extends sfBasePhpunitTestCase
         return Doctrine_Manager::getInstance()->getConnection('doctrine');
     }
 
+
+    /**
+     * Creates new helper
+     *
+     * @return myTestObjectHelper
+     */
+    protected function makeHelper()
+    {
+        return new myTestObjectHelper;
+    }
+
 }

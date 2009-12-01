@@ -37,6 +37,17 @@ abstract class {baseTestClassName} extends sfBasePhpunitFunctionalTestCase
 
 
     /**
+     * Creates new helper
+     *
+     * @return myTestObjectHelper
+     */
+    protected function makeHelper()
+    {
+        return new myTestObjectHelper;
+    }
+
+
+    /**
      * Inject your own functional testers
      *
      * @see sfTestFunctionalBase::setTesters()
