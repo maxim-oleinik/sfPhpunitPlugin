@@ -38,10 +38,14 @@ abstract class sfBasePhpunitFunctionalTestCase extends sfBasePhpunitTestCase
 
 
     /**
-     * SetUp method for PHPUnit
+     * Custiom setup initialization
+     *
+     * @see parent::setUp
      */
-    protected function setUp()
+    protected function _initialize()
     {
+        sfConfig::clear();
+
         // Initialize SCRIPT_NAME for correct work $this->generateUrl()
         // when $_SERVER is empty before first request
         $_SERVER['SCRIPT_NAME'] = '/index.php';
@@ -55,20 +59,6 @@ abstract class sfBasePhpunitFunctionalTestCase extends sfBasePhpunitTestCase
         // Init test browser
         $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPhpunitTest($this), $this->getFunctionalTesters());
 
-        // Object helper
-        $this->helper = sfBaseTestObjectHelper::getInstance();
-
-        $this->_start();
-    }
-
-
-    /**
-     * tearDown method for PHPUnit
-     */
-    protected function tearDown()
-    {
-        parent::tearDown();
-        sfConfig::clear();
     }
 
 
