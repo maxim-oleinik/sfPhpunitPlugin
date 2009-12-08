@@ -2,7 +2,6 @@
 /**
  * sfPhpunitTestBrowser extends sfBrowser
  *
- *
  * @package    sfPhpunitPlugin
  * @subpackage lib
  * @author     Maxim Oleinik <maxim.oleinik@gmail.com>
@@ -11,6 +10,12 @@ class sfPhpunitTestBrowser extends sfBrowser
 {
     private $_lastRequest       = '';
     private $_lastRequestParams = '';
+
+    /**
+     * sfConfig copy
+     * @see sfBrowser::getContext
+     */
+    protected $rawConfiguration = array();
 
 
     /**
@@ -116,4 +121,17 @@ class sfPhpunitTestBrowser extends sfBrowser
         $this->files = $files;
         return $this;
     }
+
+
+    /**
+     * Set sfConfig value and remember it during the test
+     *
+     * @param string $key
+     * @param mixed  $value
+     */
+    public function setConfigValue($key, $value)
+    {
+        $this->rawConfiguration[$key] = $value;
+    }
+
 }
