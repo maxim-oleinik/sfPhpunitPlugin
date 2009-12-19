@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Base test class for all unit tests
+ * Base test class for all app unit tests
  */
-abstract class {baseTestClassName} extends sfBasePhpunitTestCase
+abstract class {baseTestClassName} extends sfPHPUnitTestCase
 {
     /**
      * SetUp

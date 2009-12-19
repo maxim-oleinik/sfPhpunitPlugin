@@ -3,7 +3,7 @@
 /**
  * Base test class for all functional tests
  */
-abstract class {baseTestClassName} extends sfBasePhpunitFunctionalTestCase
+abstract class {baseTestClassName} extends sfPHPUnitFunctionalTestCase
 {
     /**
      * SetUp

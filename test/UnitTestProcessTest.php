@@ -13,11 +13,11 @@ require_once(dirname(__FILE__).'/_init.php');
 /**
  * Test connection
  */
-class sfPhpunitPlugin_sfPHPUnitTestCaseTest_Connction
+class sfPHPUnitPlugin_sfPHPUnitTestCaseTest_Connction
 {
     private $_test;
 
-    public function __construct(sfBasePhpunitTestCase $test)
+    public function __construct(sfPHPUnitTestCase $test)
     {
         $this->_test = $test;
     }
@@ -37,7 +37,7 @@ class sfPhpunitPlugin_sfPHPUnitTestCaseTest_Connction
 /**
  * Test
  */
-class sfPhpunitPlugin_UnitTestProcessTest extends sfBasePhpunitTestCase
+class sfPHPUnitPlugin_UnitTestProcessTest extends sfPHPUnitTestCase
 {
     public $conn = null;
     public $log  = '';
@@ -107,7 +107,7 @@ class sfPhpunitPlugin_UnitTestProcessTest extends sfBasePhpunitTestCase
     {
         $class = __CLASS__;
         $test = new $class($name);
-        $test->conn = new sfPhpunitPlugin_sfPHPUnitTestCaseTest_Connction($test);
+        $test->conn = new sfPHPUnitPlugin_sfPHPUnitTestCaseTest_Connction($test);
 
         return $test;
     }

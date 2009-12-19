@@ -3,15 +3,11 @@
 /**
  * sfBasePhpunitFunctionalTestCase is the super class for all functional
  * tests using PHPUnit.
- * The "getBrowser" method provides the current functional test/browser
- * instance of symfony and you can do anything with it you are used from
- * the normal lime based tests.
  *
  * @package    sfPhpunitPlugin
- * @subpackage lib
- * @author     Frank Stelzer <dev@frankstelzer.de>
+ * @author  Maxim Oleinik <maxim.oleinik@gmail.com>
  */
-abstract class sfBasePhpunitFunctionalTestCase extends sfBasePhpunitTestCase
+abstract class sfPHPUnitFunctionalTestCase extends sfPHPUnitTestCase
 {
     /**
      * The sfTestFunctional instance

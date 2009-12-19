@@ -10,14 +10,14 @@ require_once(dirname(__FILE__).'/_init.php');
 /**
  * Test
  */
-class sfPhpunitPlugin_UnitTestCaseTest extends sfBasePhpunitTestCase
+class sfPHPUnitPlugin_UnitTestCaseTest extends sfPHPUnitTestCase
 {
     /**
      * Make test helper
      */
     protected function makeHelper()
     {
-        return new sfPhpunitPlugin_TestHelper;
+        return new sfPHPUnitPlugin_TestHelper;
     }
 
 

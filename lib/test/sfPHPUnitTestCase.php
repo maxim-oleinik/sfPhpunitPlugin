@@ -7,7 +7,7 @@
  * @package    sfPhpunitPlugin
  * @author     Maxim Oleinik <maxim.oleinik@gmail.com>
  */
-abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
+abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
 {
     /**
      * Application name
