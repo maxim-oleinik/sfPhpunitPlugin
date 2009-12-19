@@ -68,4 +68,19 @@ class sfPHPUnitObjectHelper
         return sprintf($template, $text, $this->getUniqueCounter());
     }
 
+
+    /**
+     * Make array from Doctrine object suitable for supplied form
+     *
+     * @param  Doctrine_Record $model
+     * @param  sfFormDoctrine  $form
+     * @return array
+     */
+    public function extractFormData(Doctrine_Record $model, sfFormDoctrine $form)
+    {
+        $fields = $form->getWidgetSchema()->getFields();
+        $props  = $model->toArray();
+        return array_intersect_key($props, $fields);
+    }
+
 }
