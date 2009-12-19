@@ -5,7 +5,7 @@
  * tests using PHPUnit.
  *
  * @package    sfPhpunitPlugin
- * @author  Maxim Oleinik <maxim.oleinik@gmail.com>
+ * @author     Maxim Oleinik <maxim.oleinik@gmail.com>
  */
 abstract class sfPHPUnitFunctionalTestCase extends sfPHPUnitTestCase
 {

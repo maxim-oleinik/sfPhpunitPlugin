@@ -79,6 +79,15 @@ class sfPHPUnitPlugin_UnitTestProcessTest extends sfPHPUnitTestCase
 
 
     /**
+     * Clean up
+     */
+    protected function _reset()
+    {
+        $this->log .= ' reset';
+    }
+
+
+    /**
      * stub test: OK
      */
     public function _testOk()
@@ -126,7 +135,7 @@ class sfPHPUnitPlugin_UnitTestProcessTest extends sfPHPUnitTestCase
         $test->conn = null;
 
         $test->run();
-        $this->assertEquals(" start {$name} end", $test->log);
+        $this->assertEquals(" start {$name} end reset", $test->log);
     }
 
 
@@ -138,7 +147,7 @@ class sfPHPUnitPlugin_UnitTestProcessTest extends sfPHPUnitTestCase
         $test = $this->_makeTest($name = '_testOk');
 
         $test->run();
-        $this->assertEquals(" beginTransaction start {$name} end rollback", $test->log, $name);
+        $this->assertEquals(" beginTransaction start {$name} end rollback reset", $test->log, $name);
     }
 
 
@@ -150,7 +159,7 @@ class sfPHPUnitPlugin_UnitTestProcessTest extends sfPHPUnitTestCase
         $test = $this->_makeTest($name = '_testFail');
 
         $test->run();
-        $this->assertEquals(" beginTransaction start {$name} end rollback", $test->log, $name);
+        $this->assertEquals(" beginTransaction start {$name} end rollback reset", $test->log, $name);
     }
 
 
@@ -163,7 +172,7 @@ class sfPHPUnitPlugin_UnitTestProcessTest extends sfPHPUnitTestCase
         $test->startError = true;
 
         $test->run($result = new PHPUnit_Framework_TestResult);
-        $this->assertEquals(" beginTransaction start startError end rollback", $test->log, $name);
+        $this->assertEquals(" beginTransaction start startError end rollback reset", $test->log, $name);
         $this->assertEquals(1, $result->errorCount());
     }
 
@@ -177,7 +186,7 @@ class sfPHPUnitPlugin_UnitTestProcessTest extends sfPHPUnitTestCase
         $test->endError = true;
 
         $test->run($result = new PHPUnit_Framework_TestResult);
-        $this->assertEquals(" beginTransaction start _testOk end endError rollback", $test->log, $name);
+        $this->assertEquals(" beginTransaction start _testOk end endError rollback reset", $test->log, $name);
         $this->assertEquals(1, $result->errorCount());
     }
 

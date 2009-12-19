@@ -143,10 +143,21 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
             $conn->rollback();
         }
 
+        $this->_reset();
+
         if (!empty($e)) {
             throw $e;
         }
+    }
 
+
+    /**
+     * Final clean up
+     *
+     * @return void
+     */
+    protected function _reset()
+    {
         $this->clearModelsCache();
     }
 

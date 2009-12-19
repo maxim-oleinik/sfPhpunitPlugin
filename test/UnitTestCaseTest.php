@@ -12,6 +12,10 @@ require_once(dirname(__FILE__).'/_init.php');
  */
 class sfPHPUnitPlugin_UnitTestCaseTest extends sfPHPUnitTestCase
 {
+    protected function _reset()
+    {
+    }
+
     /**
      * Make test helper
      */
