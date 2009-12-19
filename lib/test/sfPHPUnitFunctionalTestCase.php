@@ -80,13 +80,14 @@ abstract class sfPHPUnitFunctionalTestCase extends sfPHPUnitTestCase
      *
      * @see sfPatternRouting::generate()
      *
-     * @param  string      $name   - Route name from routing.yml
-     * @param  array|Model $params - Routing params
+     * @param  string      $name     - Route name from routing.yml
+     * @param  array|Model $params   - Routing params
+     * @param  bool        $absolute - Make absolute url
      * @return string
      */
-    protected function generateUrl($name, $params = array())
+    protected function generateUrl($name, $params = array(), $absolute = false)
     {
-        return $this->browser->getContext()->getRouting()->generate($name, $params);
+        return $this->browser->getContext()->getRouting()->generate($name, $params, $absolute);
     }
 
 
