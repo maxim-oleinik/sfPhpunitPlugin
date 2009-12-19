@@ -1,12 +1,12 @@
 <?php
+
 /**
  * sfPhpunitTestBrowser extends sfBrowser
  *
  * @package    sfPhpunitPlugin
- * @subpackage lib
  * @author     Maxim Oleinik <maxim.oleinik@gmail.com>
  */
-class sfPhpunitTestBrowser extends sfBrowser
+class sfPHPUnitTestBrowser extends sfBrowser
 {
     private $_lastRequest       = '';
     private $_lastRequestParams = '';
@@ -66,6 +66,12 @@ class sfPhpunitTestBrowser extends sfBrowser
             if (!$e instanceof sfError404Exception) {
                 throw $e;
             }
+        }
+
+        $content = $this->getResponse()->getContent();
+        if ($pos = strpos($content, sfPHPUnitObjectHelper::XSS_TOKEN)) {
+            $start = ($pos - 150) > 0 ? $pos - 150 : 0;
+            throw new Exception("Found XSS tocken: \n\n" . substr($content, $start, 300));
         }
     }
 

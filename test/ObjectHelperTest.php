@@ -35,7 +35,7 @@ class sfPHPUnitPlugin_ObjectHelperTest extends PHPUnit_Framework_TestCase
     {
         $helper = new sfPHPUnitObjectHelper;
         $this->assertEquals(
-            sprintf('<span class="xss">text %04d</span>', $helper->getUniqueCounter()+1),
+            sprintf('<span %s>text %04d</span>', sfPHPUnitObjectHelper::XSS_TOKEN, $helper->getUniqueCounter()+1),
             $helper->makeText('text')
         );
 

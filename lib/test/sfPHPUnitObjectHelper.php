@@ -8,6 +8,9 @@
  */
 class sfPHPUnitObjectHelper
 {
+    const XSS_TOKEN = 'class="sf_phpunit_xss_tocken"';
+
+
     /**
      * Unique counter
      */
@@ -59,7 +62,7 @@ class sfPHPUnitObjectHelper
     {
         $template = '%s %04d';
         if ($xss) {
-            $template = "<span class=\"xss\">{$template}</span>";
+            $template = '<span '.self::XSS_TOKEN.'>'.$template.'</span>';
         }
 
         return sprintf($template, $text, $this->getUniqueCounter());
