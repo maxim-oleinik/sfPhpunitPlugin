@@ -8,10 +8,9 @@
  * PHPUnit_Framework_TestCase instance.
  *
  * @package    sfPhpunitPlugin
- * @subpackage lib
  * @author     Frank Stelzer <dev@frankstelzer.de>
  */
-class sfPhpunitTest extends lime_test
+class sfPHPUnitLimeAdapter extends lime_test
 {
   /**
    * PHPUnit_Framework_TestCase
@@ -38,18 +37,6 @@ class sfPhpunitTest extends lime_test
     // Nothing to do here, everything else is done by PHPUnit itself.
     // If you are missing the output colors, just call
     // the phpunit command with the "--colors" option
-  }
-
-  /**
-   * Only used for debugging purposes. This method should never be called,
-   * otherwise you have found a bug :)
-   *
-   * @param string $name
-   * @param array $arguments
-   */
-  public function __call($name, $arguments)
-  {
-    echo "sfPhpunitTest::__call:{$name}:" . var_export($arguments, true) . ";\n";
   }
 
   /**
@@ -184,7 +171,6 @@ class sfPhpunitTest extends lime_test
    */
   public function pass($message = '')
   {
-    $this->testCase->assertTrue(true, $message);
   }
 
   /**
