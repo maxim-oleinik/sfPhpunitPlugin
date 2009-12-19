@@ -3,6 +3,6 @@
 /**
  * Test helper
  */
-class sfPHPUnitPlugin_TestHelper extends sfBaseTestObjectHelper
+class sfPHPUnitPlugin_TestHelper extends sfPHPUnitObjectHelper
 {
 }

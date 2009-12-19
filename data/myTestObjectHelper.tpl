@@ -3,12 +3,12 @@
 /**
  * myTestObjectHelper
  */
-class myTestObjectHelper extends sfBaseTestObjectHelper
+class myTestObjectHelper extends sfPHPUnitObjectHelper
 {
     /**
      * Example: Make article
      *
-    public function makeArticle($save = false, array $props = array())
+    public function makeArticle(array $props = array(), $save = true)
     {
         $defaultProps = array(
             'title'  => $this->_makeText('Article title'),
@@ -16,7 +16,7 @@ class myTestObjectHelper extends sfBaseTestObjectHelper
         );
         $props = array_merge($defaultProps, $props);
 
-        return $this->makeModel('Article', $save, $props);
+        return $this->makeModel('Article', $props, $save);
     }
      */
 

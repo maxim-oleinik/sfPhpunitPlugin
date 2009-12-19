@@ -6,17 +6,12 @@
  * @package    sfPhpunitPlugin
  * @author     Maxim Oleinik <maxim.oleinik@gmail.com>
  */
-class sfBaseTestObjectHelper
+class sfPHPUnitObjectHelper
 {
     /**
      * Unique counter
      */
     protected static $_counter = 0;
-
-    /**
-     * Safe classes
-     */
-    protected $_safe = array();
 
 
     /**
@@ -31,39 +26,15 @@ class sfBaseTestObjectHelper
 
 
     /**
-     * Init safe classes
-     *
-     * @param  array $safe
-     * @return void
-     */
-    public function setSafe(array $safe)
-    {
-        $this->_safe = $safe;
-    }
-
-
-    /**
-     * Is class safe
-     *
-     * @param  string $item
-     * @return bool
-     */
-    public function isSafe($item)
-    {
-        return in_array($item, $this->_safe);
-    }
-
-
-    /**
      * Create model object
      *
      * @param  string $modelName - model class name
-     * @param  bool   $save      - save object
      * @param  array  $props     - model props
+     * @param  bool   $save      - save object
      *
      * @return Doctrine_Record
      */
-    public function makeModel($modelName, $save = false, array $props = array())
+    public function makeModel($modelName, array $props = array(), $save = true)
     {
         $model = new $modelName;
         $model->fromArray($props);
@@ -84,10 +55,10 @@ class sfBaseTestObjectHelper
      * @param  string $text
      * @return string
      */
-    public function makeText($text, $item = null)
+    public function makeText($text, $xss = true)
     {
         $template = '%s %04d';
-        if (!$item || !$this->isSafe($item)) {
+        if ($xss) {
             $template = "<span class=\"xss\">{$template}</span>";
         }
 
