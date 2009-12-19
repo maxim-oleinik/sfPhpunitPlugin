@@ -30,20 +30,6 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
 
 
     /**
-     * Returns database connection
-     */
-    abstract protected function getConnection();
-
-
-    /**
-     * Creates new helper
-     *
-     * @return sfBaseTestObjectHelper
-     */
-    abstract protected function makeHelper();
-
-
-    /**
      * Returns application name
      *
      * @return string
@@ -97,6 +83,24 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
 
 
     /**
+     * Returns database connection
+     */
+    protected function getConnection()
+    {
+    }
+
+
+    /**
+     * Creates new test helper
+     *
+     * @return sfBaseTestObjectHelper
+     */
+    protected function makeHelper()
+    {
+    }
+
+
+    /**
      * Custiom setup initialization
      */
     protected function _initialize()
@@ -129,11 +133,18 @@ abstract class sfBasePhpunitTestCase extends PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        $this->_end();
+        try {
+            $this->_end();
+        } catch (Exception $e) {}
+
 
         // Rollback transaction
         if ($conn = $this->getConnection()) {
             $conn->rollback();
+        }
+
+        if (!empty($e)) {
+            throw $e;
         }
 
         $this->clearModelsCache();

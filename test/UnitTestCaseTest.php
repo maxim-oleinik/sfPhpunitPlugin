@@ -1,19 +1,20 @@
 <?php
+/**
+ * Base TestCase test
+ *
+ * @author  Maxim Oleinik <maxim.oleinik@gmail.com>
+ */
 require_once(dirname(__FILE__).'/_init.php');
-
 
 
 /**
  * Test
  */
-class sfPhpunitPlugin_sfPHPUnitTestCaseTest extends sfBasePhpunitTestCase
+class sfPhpunitPlugin_UnitTestCaseTest extends sfBasePhpunitTestCase
 {
-    public function getConnection()
-    {
-
-    }
-
-
+    /**
+     * Make test helper
+     */
     protected function makeHelper()
     {
         return new sfPhpunitPlugin_TestHelper;
