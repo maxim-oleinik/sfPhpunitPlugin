@@ -6,28 +6,6 @@
 abstract class {baseTestClassName} extends sfPHPUnitTestCase
 {
     /**
-     * SetUp
-     */
-    final public function setUp()
-    {
-        parent::setUp();
-
-        // Your code
-    }
-
-
-    /**
-     * TearDown
-     */
-    final public function tearDown()
-    {
-        // Your code
-
-        parent::tearDown();
-    }
-
-
-    /**
      * Returns database connection to wrap tests with transaction
      */
     protected function getConnection()

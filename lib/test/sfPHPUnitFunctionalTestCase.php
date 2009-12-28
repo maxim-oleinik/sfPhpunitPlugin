@@ -7,7 +7,7 @@
  * @package    sfPhpunitPlugin
  * @author     Maxim Oleinik <maxim.oleinik@gmail.com>
  */
-abstract class sfPHPUnitFunctionalTestCase extends sfPHPUnitTestCase
+abstract class sfPHPUnitFunctionalTestCase extends myUnitTestCase
 {
     /**
      * The sfTestFunctional instance
@@ -54,40 +54,6 @@ abstract class sfPHPUnitFunctionalTestCase extends sfPHPUnitTestCase
 
         // Init test browser
         $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPHPUnitLimeAdapter($this), $this->getFunctionalTesters());
-    }
-
-
-    /**
-     * Returns the sfTestFunctional instance
-     *
-     * @return sfTestFunctional
-     */
-    public function getBrowser()
-    {
-        return $this->browser;
-    }
-
-
-    /**
-     * Generate URL from route name
-     *
-     * Example:
-     *   $this->generateUrl('homepage');
-     *      -> "/"
-     *   $this->generateUrl('article_edit', $articleObject);
-     *      -> "/article/1/edit"
-     *   $this->generateUrl('custom_route', $arrRouteParams);
-     *
-     * @see sfPatternRouting::generate()
-     *
-     * @param  string      $name     - Route name from routing.yml
-     * @param  array|Model $params   - Routing params
-     * @param  bool        $absolute - Make absolute url
-     * @return string
-     */
-    protected function generateUrl($name, $params = array(), $absolute = false)
-    {
-        return $this->browser->getContext()->getRouting()->generate($name, $params, $absolute);
     }
 
 
@@ -171,6 +137,29 @@ abstract class sfPHPUnitFunctionalTestCase extends sfPHPUnitTestCase
                 .  PHPUnit_Util_Filter::getFilteredStacktrace($e, false);
 
         return $result;
+    }
+
+
+    /**
+     * Generate URL from route name
+     *
+     * Example:
+     *   $this->generateUrl('homepage');
+     *      -> "/"
+     *   $this->generateUrl('article_edit', $articleObject);
+     *      -> "/article/1/edit"
+     *   $this->generateUrl('custom_route', $arrRouteParams);
+     *
+     * @see sfPatternRouting::generate()
+     *
+     * @param  string      $name     - Route name from routing.yml
+     * @param  array|Model $params   - Routing params
+     * @param  bool        $absolute - Make absolute url
+     * @return string
+     */
+    protected function generateUrl($name, $params = array(), $absolute = false)
+    {
+        return $this->browser->getContext()->getRouting()->generate($name, $params, $absolute);
     }
 
 }
