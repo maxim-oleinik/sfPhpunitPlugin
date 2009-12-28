@@ -210,4 +210,25 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected->toArray(false), $actual->toArray(false), $message);
     }
 
+
+    /**
+     * Query to find list by conditions
+     *
+     * @param  string $modelName
+     * @param  array  $conditions - array('name' => 'My Article')
+     * @return Doctrine_Query
+     */
+    protected function queryFind($modelName, array $conditions)
+    {
+        $table = Doctrine_Core::getTable($modelName);
+        $query = $table->createQuery('a');
+
+        foreach ($conditions as $column => $condition) {
+            $column = $table->getFieldName($column);
+            $query->andWhere("a.{$column} = ?", $condition);
+        }
+
+        return $query;
+    }
+
 }
