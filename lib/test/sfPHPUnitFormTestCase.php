@@ -81,9 +81,24 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      */
     protected $saveForm = true;
 
+    /**
+     * Test form
+     */
+    protected $form;
+
 
     // Fixtures
     // -------------------------------------------------------------------------
+
+    /**
+     * SetUp
+     */
+    public function setUp()
+    {
+        parent::setup();
+        $this->form = $this->makeForm();
+    }
+
 
     /**
      * Create form
@@ -128,11 +143,26 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
 
 
     /**
-     * Get valid input
+     * Get valid data
      *
      * @return array - array("title" => "My title")
      */
-    abstract protected function getValidInput();
+    abstract protected function getValidData();
+
+
+    /**
+     * Get valid input with csrf token
+     *
+     * @return array
+     */
+    protected function getValidInput()
+    {
+        $input = $this->getValidData();
+        if ($this->form->isCsrfProtected()) {
+            $input[$this->form->getCsrfFieldName()] = $this->form->getCSRFtoken();
+        }
+        return $input;
+    }
 
 
     /**
@@ -243,16 +273,13 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      */
     public function testAutoFields()
     {
-        $form = $this->makeForm();
-
         $expected = $this->getFields();
-        $expected[] = $form->getCSRFFieldName();
         sort($expected);
 
-        $actual = array_keys($form->getWidgetSchema()->getFields());
+        $actual = array_keys($this->form->getWidgetSchema()->getFields());
         sort($actual);
 
-        $this->assertEquals($expected, $actual, get_class($form));
+        $this->assertEquals($expected, $actual, get_class($this->form));
     }
 
 
@@ -263,19 +290,18 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      */
     public function testAutoValidation()
     {
-        $form = $this->makeForm();
         foreach ($this->getValidationTestingPlan() as $name => $item) {
-            $form->bind($item->getInput(), array());
+            $this->form->bind($item->getInput(), array());
 
             // Valid
             if (!$item->getErrorsCount()) {
-                $this->assertFormIsValid($form, $name);
+                $this->assertFormIsValid($this->form, $name);
 
             // Errors
             } else {
-                $this->assertFormHasErros($form, $item->getErrorsCount(), $name);
+                $this->assertFormHasErros($this->form, $item->getErrorsCount(), $name);
                 foreach ($item->getExpectedErrors() as $field => $error) {
-                    $this->assertFormError($form, $field, $error, $name);
+                    $this->assertFormError($this->form, $field, $error, $name);
                 }
             }
 
@@ -290,22 +316,15 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      */
     public function testAutoFormIsValid()
     {
-        $form = $this->makeForm();
-
         $input = $this->getValidInput();
-        if ($form->isCsrfProtected()) {
-            $input[$form->getCsrfFieldName()] = $form->getCSRFtoken();
-        }
+        $this->form->bind($input, array());
+        $this->assertFormIsValid($this->form);
 
+        if ($this->saveForm && $this->form instanceof sfFormObject) {
+            $object = $this->form->save();
 
-        $form->bind($input, array());
-        $this->assertFormIsValid($form);
-
-        if ($this->saveForm && $form instanceof sfFormObject) {
-            $object = $form->save();
-
-            if ($form->isCsrfProtected()) {
-                unset($input[$form->getCsrfFieldName()]);
+            if ($this->form->isCsrfProtected()) {
+                unset($input[$this->form->getCsrfFieldName()]);
             }
 
             $this->assertEquals(1, $this->queryFind(get_class($object), $this->cleanInput($input))->count(), 'Expected found 1 object');
