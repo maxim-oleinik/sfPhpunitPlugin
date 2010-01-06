@@ -12,6 +12,8 @@ require_once(dirname(__FILE__).'/_init.php');
  */
 class sfPHPUnitPlugin_ObjectHelperTest extends PHPUnit_Framework_TestCase
 {
+    protected $preserveGlobalState = false;
+
     /**
      * Get unique counter
      */

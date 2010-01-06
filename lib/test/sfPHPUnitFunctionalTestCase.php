@@ -49,9 +49,6 @@ abstract class sfPHPUnitFunctionalTestCase extends myUnitTestCase
         // Create context for current app
         $this->createContext();
 
-        // Remove current app cache
-        sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
-
         // Init test browser
         $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPHPUnitLimeAdapter($this), $this->getFunctionalTesters());
     }
