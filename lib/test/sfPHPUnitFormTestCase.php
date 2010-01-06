@@ -76,6 +76,12 @@ class sfPHPUnitFormValidationItem
  */
 abstract class sfPHPUnitFormTestCase extends myUnitTestCase
 {
+    /**
+     * Test form saving
+     */
+    protected $saveForm = true;
+
+
     // Fixtures
     // -------------------------------------------------------------------------
 
@@ -215,6 +221,18 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
     }
 
 
+    /**
+     * Clean input to search in database
+     *
+     * @param  array $input
+     * @return array
+     */
+    protected function cleanInput(array $input)
+    {
+        return $input;
+    }
+
+
     // Tests
     // -------------------------------------------------------------------------
 
@@ -247,7 +265,7 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
     {
         $form = $this->makeForm();
         foreach ($this->getValidationTestingPlan() as $name => $item) {
-            $form->bind($item->getInput());
+            $form->bind($item->getInput(), array());
 
             // Valid
             if (!$item->getErrorsCount()) {
@@ -279,17 +297,18 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
             $input[$form->getCsrfFieldName()] = $form->getCSRFtoken();
         }
 
-        $form->bind($input);
+
+        $form->bind($input, array());
         $this->assertFormIsValid($form);
 
-        if ($form instanceof sfFormObject) {
+        if ($this->saveForm && $form instanceof sfFormObject) {
             $object = $form->save();
 
             if ($form->isCsrfProtected()) {
                 unset($input[$form->getCsrfFieldName()]);
             }
 
-            $this->assertEquals(1, $this->queryFind(get_class($object), $input)->count(), 'Expected found 1 object');
+            $this->assertEquals(1, $this->queryFind(get_class($object), $this->cleanInput($input))->count(), 'Expected found 1 object');
         }
     }
 
