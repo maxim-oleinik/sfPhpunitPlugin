@@ -291,17 +291,18 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
     public function testAutoValidation()
     {
         foreach ($this->getValidationTestingPlan() as $name => $item) {
-            $this->form->bind($item->getInput(), array());
+            $form = $this->makeForm();
+            $form->bind($item->getInput(), array());
 
             // Valid
             if (!$item->getErrorsCount()) {
-                $this->assertFormIsValid($this->form, $name);
+                $this->assertFormIsValid($form, $name);
 
             // Errors
             } else {
-                $this->assertFormHasErros($this->form, $item->getErrorsCount(), $name);
+                $this->assertFormHasErros($form, $item->getErrorsCount(), $name);
                 foreach ($item->getExpectedErrors() as $field => $error) {
-                    $this->assertFormError($this->form, $field, $error, $name);
+                    $this->assertFormError($form, $field, $error, $name);
                 }
             }
 
