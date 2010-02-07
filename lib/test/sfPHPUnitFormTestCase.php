@@ -157,7 +157,18 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      */
     protected function getValidInput()
     {
-        $input = $this->getValidData();
+        return $this->makeInput($this->getValidData());
+    }
+
+
+    /**
+     * Add CSRF token to input
+     *
+     * @param  array $input
+     * @return array
+     */
+    protected function makeInput(array $input)
+    {
         if ($this->form->isCsrfProtected()) {
             $input[$this->form->getCsrfFieldName()] = $this->form->getCSRFtoken();
         }
@@ -165,20 +176,26 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
     }
 
 
-    /**
-     * Make input data based on valid input
-     *
-     * @param  array $input - merge with valid input
-     * @return array
-     */
-    protected function makeInput(array $input)
-    {
-        return array_merge($this->getValidInput(), $input);
-    }
-
-
     // Assertions
     // -------------------------------------------------------------------------
+
+
+    /**
+     * Assert form fields
+     *
+     * @param  array  $expected - array(name, title)
+     * @param  sfForm $form
+     * @param  string $message
+     */
+    protected function assertFormFields($expected, sfForm $form, $message = null)
+    {
+        sort($expected);
+
+        $actual = array_keys($form->getWidgetSchema()->getFields());
+        sort($actual);
+
+        $this->assertEquals($expected, $actual, $message);
+    }
 
 
     /**
@@ -259,12 +276,17 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      */
     protected function cleanInput(array $input)
     {
+        if (isset($input[$this->form->getCsrfFieldName()])) {
+            unset($input[$this->form->getCsrfFieldName()]);
+        }
+
         return $input;
     }
 
 
     // Tests
     // -------------------------------------------------------------------------
+
 
     /**
      * Check form fields
@@ -273,13 +295,7 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      */
     public function testAutoFields()
     {
-        $expected = $this->getFields();
-        sort($expected);
-
-        $actual = array_keys($this->form->getWidgetSchema()->getFields());
-        sort($actual);
-
-        $this->assertEquals($expected, $actual, get_class($this->form));
+        $this->assertFormFields($this->getFields(), $this->form, get_class($this->form));
     }
 
 
@@ -292,11 +308,16 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
     {
         foreach ($this->getValidationTestingPlan() as $name => $item) {
             $form = $this->makeForm();
-            $form->bind($item->getInput(), array());
+            $form->bind($input = $item->getInput(), array());
 
             // Valid
             if (!$item->getErrorsCount()) {
                 $this->assertFormIsValid($form, $name);
+
+                if ($this->saveForm && $this->form instanceof sfFormObject) {
+                    $object = $form->save();
+                    $this->assertEquals(1, $this->queryFind(get_class($object), $this->cleanInput($input))->count(), $name.PHP_EOL.'Expected found 1 object');
+                }
 
             // Errors
             } else {
@@ -323,11 +344,6 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
 
         if ($this->saveForm && $this->form instanceof sfFormObject) {
             $object = $this->form->save();
-
-            if ($this->form->isCsrfProtected()) {
-                unset($input[$this->form->getCsrfFieldName()]);
-            }
-
             $this->assertEquals(1, $this->queryFind(get_class($object), $this->cleanInput($input))->count(), 'Expected found 1 object');
         }
     }
