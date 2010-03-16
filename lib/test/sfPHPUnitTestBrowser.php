@@ -64,6 +64,7 @@ class sfPHPUnitTestBrowser extends sfBrowser
         if ($e = $this->getCurrentException()) {
             // Throw exception if not forward404
             if (!$e instanceof sfError404Exception) {
+                $this->resetCurrentException();
                 throw $e;
             }
         }
