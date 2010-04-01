@@ -244,8 +244,9 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
     {
         $message = $message ? $message.PHP_EOL : null;
 
-        $this->assertTrue($form[$field]->hasError(), $this->makeErrorMess($form, $message."Expected field `{$field}` HAS error"));
-        $error = $form[$field]->getError()->getCode();
+        $errors = $form->getErrorSchema();
+        $this->assertTrue(isset($errors[$field]), $this->makeErrorMess($form, $message."Expected field `{$field}` HAS error"));
+        $error = $errors[$field]->getCode();
         $this->assertEquals($expectedError, $error, $this->makeErrorMess($form, $message."Expected error `{$expectedError}` for field `{$field}`"));
     }
 
