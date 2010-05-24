@@ -244,10 +244,17 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
     {
         $message = $message ? $message.PHP_EOL : null;
 
-        $errors = $form->getErrorSchema();
-        $this->assertTrue(isset($errors[$field]), $this->makeErrorMess($form, $message."Expected field `{$field}` HAS error"));
-        $error = $errors[$field]->getCode();
-        $this->assertEquals($expectedError, $error, $this->makeErrorMess($form, $message."Expected error `{$expectedError}` for field `{$field}`"));
+        // Global error
+        if (!$field) {
+            $this->assertTrue($form->hasGlobalErrors(), $this->makeErrorMess($form, $message."Expected form HAS global errors"));
+            $errors = implode('; ', $form->getGlobalErrors());
+            $this->assertContains($expectedError, $errors, $this->makeErrorMess($form, $message."Global errors contains next text"));
+        } else {
+            $errors = $form->getErrorSchema();
+            $this->assertTrue(isset($errors[$field]), $this->makeErrorMess($form, $message."Expected field `{$field}` HAS error"));
+            $error = $errors[$field]->getCode();
+            $this->assertEquals($expectedError, $error, $this->makeErrorMess($form, $message."Expected error `{$expectedError}` for field `{$field}`"));
+        }
     }
 
 
