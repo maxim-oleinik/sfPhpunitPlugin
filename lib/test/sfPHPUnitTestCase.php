@@ -232,7 +232,11 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
 
         foreach ($conditions as $column => $condition) {
             $column = $table->getFieldName($column);
-            $query->andWhere("a.{$column} = ?", $condition);
+            if (null === $condition) {
+                $query->andWhere("a.{$column} IS NULL");
+            } else {
+                $query->andWhere("a.{$column} = ?", $condition);
+            }
         }
 
         return $query;
