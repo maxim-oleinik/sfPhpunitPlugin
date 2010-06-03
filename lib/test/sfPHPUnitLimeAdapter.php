@@ -212,46 +212,10 @@ class sfPHPUnitLimeAdapter extends lime_test
     return $this->ok((@include($file)) == 1, $message);
   }
 
-  /**
-   * Overwritten lime_test method
-   *
-   * @see lime_test#comment()
-   */
-  public function comment($msg)
-  {
-    // $this->diag('COMMENT: ' . $msg);
-  }
 
-  /**
-   * Overwritten lime_test method
-   *
-   * @see lime_test#info()
-   */
-  public function info($msg)
-  {
-    // $this->diag('INFO: ' . $msg);
-  }
-
-  /**
-   * Overwritten lime_test method
-   *
-   * @see lime_test#error()
-   */
-  public function error($msg)
-  {
-    // $this->diag('ERROR: ' . $msg);
-  }
-
-  /**
-   * Overwritten lime_test method
-   *
-   * @see lime_test#diag()
-   */
-  public function diag($msg)
-  {
-    // PHPUnit does not support a native output method,
-    // so do a normal echo call here.
-    // echo ">>$msg \n";
-  }
+  public function comment($msg) {}
+  public function info($msg) {}
+  public function error($message, $file = null, $line = null, array $traces = array()) {}
+  public function diag($msg) {}
 
 }
