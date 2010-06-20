@@ -124,6 +124,7 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
         $this->helper = $this->makeHelper();
 
         // Init concrete test config && autoload
+        sfConfig::clear();
         ProjectConfiguration::getApplicationConfiguration($this->getApplication(), $this->getEnvironment(), $debug = true);
 
         // Custom init
