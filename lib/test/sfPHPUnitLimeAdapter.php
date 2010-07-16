@@ -110,17 +110,6 @@ class sfPHPUnitLimeAdapter extends lime_test
   /**
    * Overwritten lime_test method
    *
-   * @see lime_test#cmp_ok()
-   */
-  public function cmp_ok($exp1, $op, $exp2, $message = '')
-  {
-    eval(sprintf("\$result = \$exp1 $op \$exp2;"));
-    return $this->ok($result, $message);
-  }
-
-  /**
-   * Overwritten lime_test method
-   *
    * @see lime_test#can_ok()
    */
   public function can_ok($object, $methods, $message = '')
