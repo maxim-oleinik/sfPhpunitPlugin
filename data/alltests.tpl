@@ -22,12 +22,12 @@ class AllTests extends PHPUnit_Framework_TestSuite
         sfToolkit::clearDirectory(sfConfig::get('sf_cache_dir'));
 
         // Rebuild DB
-        $task = new sfDoctrineBuildTask(new sfEventDispatcher, new sfFormatter);
+        $task = new sfPropelBuildTask(new sfEventDispatcher, new sfFormatter);
         $task->run($args = array(), $options = array(
+            'application' => 'frontend',
             'env' => 'test',
-            'no-confirmation' => true,
             'db' => true,
-            'and-migrate' => true,
+            'no-confirmation' => true,
         ));
         // Rebuild config after task run
         ProjectConfiguration::getApplicationConfiguration('frontend', 'test', $debug = true);

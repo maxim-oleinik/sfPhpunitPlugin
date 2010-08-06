@@ -180,9 +180,6 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
      */
     protected function clearModelsCache()
     {
-        foreach (Doctrine::getLoadedModels() as $modelName) {
-            Doctrine::getTable($modelName)->clear();
-        }
     }
 
 

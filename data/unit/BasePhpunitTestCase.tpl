@@ -10,7 +10,7 @@ abstract class {baseTestClassName} extends sfPHPUnitTestCase
      */
     protected function getConnection()
     {
-        return Doctrine_Manager::getInstance()->getConnection('doctrine');
+        return Propel::getConnection();
     }
 
 
