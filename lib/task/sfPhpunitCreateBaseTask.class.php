@@ -140,7 +140,7 @@ abstract class sfPhpunitCreateBaseTask extends sfBaseTask
 	 */
 	protected function createAllTestFile(array $options)
 	{
-		$fname = sfConfig::get('sf_test_dir').DIRECTORY_SEPARATOR.'AllPhpunitTests.php';
+		$fname = sfConfig::get('sf_test_dir').DIRECTORY_SEPARATOR.'AllTests.php';
 
 		// overwrite all test file only, if file does already exist and according option is defined
 		if (!$options['overwrite'] && file_exists($fname)) {
