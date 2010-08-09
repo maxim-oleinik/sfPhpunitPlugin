@@ -220,27 +220,23 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
 
 
     /**
-     * Query to find list by conditions
+     * Find list by conditions
      *
      * @param  string $modelName
      * @param  array  $conditions - array('name' => 'My Article')
      * @return Doctrine_Query
      */
-    protected function queryFind($modelName, array $conditions)
+    protected function find($model, array $conditions)
     {
-        $table = Doctrine_Core::getTable($modelName);
-        $query = $table->createQuery('a');
+        $criteria = new Criteria();
 
         foreach ($conditions as $column => $condition) {
-            $column = $table->getFieldName($column);
-            if (null === $condition) {
-                $query->andWhere("a.{$column} IS NULL");
-            } else {
-                $query->andWhere("a.{$column} = ?", $condition);
-            }
+            $column = call_user_func(array(constant($model.'::PEER'), 'translateFieldName'), $column, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_COLNAME);
+            $operator = Criteria::EQUAL;
+            $criteria->add($column, $condition, $operator);
         }
 
-        return $query;
+        return call_user_func(array(constant($model.'::PEER'), 'doSelect'), $criteria);
     }
 
 }

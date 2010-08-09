@@ -352,7 +352,7 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
 
         if ($this->saveForm && $this->form instanceof sfFormObject) {
             $object = $this->form->save();
-            $this->assertEquals(1, $this->queryFind(get_class($object), $this->cleanInput($input))->count(), 'Expected found 1 object');
+            $this->assertEquals(1, count($this->find(get_class($object), $this->cleanInput($input))), 'Expected found 1 object');
         }
     }
 
