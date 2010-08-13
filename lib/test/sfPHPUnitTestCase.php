@@ -232,7 +232,11 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
 
         foreach ($conditions as $column => $condition) {
             $column = call_user_func(array(constant($model.'::PEER'), 'translateFieldName'), $column, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_COLNAME);
-            $operator = Criteria::EQUAL;
+            if (null === $condition) {
+                $operator = Criteria::ISNULL;
+            } else {
+                $operator = Criteria::EQUAL;
+            }
             $criteria->add($column, $condition, $operator);
         }
 
