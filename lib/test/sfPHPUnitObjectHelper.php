@@ -18,6 +18,34 @@ class sfPHPUnitObjectHelper
 
 
     /**
+     * Doctrine\ORM\EntityManager
+     */
+    protected $em;
+
+
+    /**
+     * Construct
+     *
+     * @param  Doctrine\ORM\EntityManager $em
+     */
+    public function __construct(\Doctrine\ORM\EntityManager $em)
+    {
+        $this->em = $em;
+    }
+
+
+    /**
+     * Get entity manager
+     *
+     * @return Doctrine\ORM\EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->em;
+    }
+
+
+    /**
      * Get unique counter
      *
      * @return int
@@ -40,10 +68,14 @@ class sfPHPUnitObjectHelper
     public function makeModel($modelName, array $props = array(), $save = true)
     {
         $model = new $modelName;
-        $model->fromArray($props);
+        foreach ($props as $name => $value) {
+            $setter = 'set' . $name;
+            $model->$setter($value);
+        }
 
+        $this->em->persist($model);
         if ($save) {
-            $model->save();
+            $this->em->flush();
         }
 
         return $model;
