@@ -222,21 +222,24 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
      * @param  array  $conditions - array('name' => 'My Article')
      * @return Doctrine_Query
      */
-    protected function queryFind($modelName, array $conditions)
+    protected function queryFind($modelName, array $conditions, $alias = 'a')
     {
-        $table = Doctrine_Core::getTable($modelName);
-        $query = $table->createQuery('a');
+        $em = $this->getEntityManager();
+
+        $qb = $em->createQueryBuilder()
+            ->select($alias)
+            ->from($modelName, $alias);
 
         foreach ($conditions as $column => $condition) {
-            $column = $table->getFieldName($column);
             if (null === $condition) {
-                $query->andWhere("a.{$column} IS NULL");
+                $qb->andWhere("{$alias}.{$column} IS NULL");
             } else {
-                $query->andWhere("a.{$column} = ?", $condition);
+                $qb->andWhere("{$alias}.{$column} = :{$column}");
+                $qb->setParameter($column, $condition);
             }
         }
 
-        return $query;
+        return $qb->getQuery();
     }
 
 }

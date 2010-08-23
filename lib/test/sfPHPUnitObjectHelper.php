@@ -108,10 +108,24 @@ class sfPHPUnitObjectHelper
      * @param  sfFormDoctrine  $form
      * @return array
      */
-    public function extractFormData(Doctrine_Record $model, sfFormDoctrine $form)
+    public function extractFormData($model, sfFormDoctrine $form)
     {
         $fields = $form->getWidgetSchema()->getFields();
-        $props  = $model->toArray();
+
+        $props = array();
+        $reflFields = $this->getEntityManager()->getClassMetadata(get_class($model))->reflFields;
+        foreach ($reflFields as $name => $reflField) {
+            $getter = 'get'.$name;
+
+            if (method_exists($model, $getter)) {
+                $value = $model->$getter();
+
+                if (!is_object($value)) {
+                    $props[$name] = $value;
+                }
+            }
+        }
+
         return array_intersect_key($props, $fields);
     }
 
