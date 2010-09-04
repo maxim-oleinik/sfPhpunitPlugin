@@ -1,0 +1,108 @@
+
+## Form tests
+
+sfPHPUnitFormTestCase
+    abstract protected function makeForm();
+    abstract protected function getFields();
+    abstract protected function getValidationTestingPlan();
+    abstract protected function getValidData();
+
+    protected function getValidInput()
+    protected function makeInput(array $input)
+    protected function assertFormFields($expected, sfForm $form, $message = null)
+    protected function assertFormIsValid(sfForm $form, $message = null)
+    protected function assertFormHasErros(sfForm $form, $errorsCount, $message = null)
+    protected function assertFormError(sfForm $form, $field, $expectedError, $message = null)
+    protected function makeErrorMess(sfForm $form, $message)
+    protected function cleanInput(array $input)
+
+    public function testAutoFields()
+    public function testAutoRequirements()
+    public function testAutoValidation()
+    public function testAutoFormIsValid()
+
+
+Example:
+
+    class ArticleFormTest extends sfPHPUnitFormTestCase
+    {
+        /**
+         * Make form
+         */
+        protected function makeForm()
+        {
+            return new ArticleForm();
+        }
+
+
+        /**
+         * Return array with all expected form fields with valid valies
+         */
+        protected function getValidData()
+        {
+            return array(
+                'title'   => 'Article title',
+                'slug'    => 'slug-code',
+                'text'    => 'Article text',
+            );
+        }
+
+
+        /**
+         * Describe all expected form fields and their requirements
+         */
+        protected function getFields()
+        {
+            return array(
+                'title' => array(
+                    'min_length'  => 5,
+                    'max_length'  => 100,
+                    'trim'        => true,
+                    'required'    => true,
+                ),
+                'slug' => array(
+                    'min_length'  => array('1234' => false, '12345' => true), // Custom texting plan
+                    'max_length'  => 100, // Accept custom testing plan
+                    'trim'        => true,
+                    'required'    => true,
+                    'invalid'     => array(
+                        'invalid slug',
+                        $this->makeArticle()->getSlug(), // Slug should be unique
+                    ),
+                    'success'     => array(
+                        'validslug',
+                        'validslug1',
+                        'Valid-Slug1',
+                    ),
+                ),
+                'text' => array(
+                    'trim'        => true,
+                    'required'    => true,
+                ),
+                '_csrf_token' => array(
+                    'required'    => true,
+                ),
+            );
+        }
+
+
+        // Do own tests here
+
+        /**
+         * Example
+         * @see sfPHPUnitFormTestCase
+         */
+        public function testExemple()
+        {
+            $form = $this->makeForm();
+
+            $input = $this->getValidInput();
+            $input['title'] = 'Some title'
+
+            $form->bind($input);
+            $this->assertFormIsValid($form);
+
+            $ob = $form->save();
+            $this->assertEquals(1, count($this->find(get_class($ob), $this->cleanInput($data))));
+        }
+    }
