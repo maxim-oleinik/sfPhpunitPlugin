@@ -114,7 +114,21 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
     /**
      * Get expected form fields (use fields)
      *
-     * @return array - array("title", "content")
+     * @return array
+     *   'id' => null,
+     *   "title" => array(
+     *       'min_length'  => 5,
+     *       'min_length'  => array('1234' => false, '12345' => true),
+     *       'max_length'  => 255,
+     *       'max_length'  => array(str_repeat('1', 50) => true, str_repeat('1', 51) => false),
+     *       'trim'        => true,
+     *       'required'    => true,
+     *       'invalid'     => array('invalid value 1', 'invalid value 2'),
+     *       'success'     => array('success value 1', 'success value 2'),
+     *   ),
+     *   '_csrf_token' => array(
+     *       'required'    => true,
+     *   ),
      */
     abstract protected function getFields();
 
@@ -303,7 +317,144 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      */
     public function testAutoFields()
     {
-        $this->assertFormFields($this->getFields(), $this->form, get_class($this->form));
+        $this->assertFormFields(array_keys($this->getFields()), $this->form, get_class($this->form));
+
+        // Check getValidData
+        $this->assertFormFields(array_keys($this->getValidInput()), $this->form,
+            "Expected getValidData() returns all avaliable fields");
+    }
+
+
+    /**
+     * Check each form item basic requirements
+     *
+     * @see getFields()
+     */
+    public function testAutoRequirements()
+    {
+        foreach ($this->getFields() as $fieldName => $requirements) {
+
+            if (!$requirements) {
+                $requirements = array();
+            }
+            if (!isset($requirements['required'])) {
+                $requirements['required'] = false;
+            }
+
+            foreach ($requirements as $errorCode => $value) {
+
+                $testName = "{$fieldName}: {$errorCode}";
+                $form = $this->makeForm();
+
+                switch ($errorCode) {
+
+                    # Required
+                    case 'required':
+                        $input = $this->getValidInput();
+                        unset($input[$fieldName]);
+                        if ($value) {
+                            $form->bind($input);
+                            $this->assertFormHasErros($form, 1, $testName);
+                            $this->assertFormError($form, $fieldName, $errorCode, $testName);
+                        } else {
+                            $form->bind($input);
+                            $this->assertFormIsValid($form, $testName);
+                        }
+                        break;
+
+                    # Min Length
+                    case 'min_length':
+                        if (!is_array($value)) {
+                            $plan = array(
+                                str_repeat('я', $value - 1) => false, // min - 1
+                                str_repeat('я', $value)     => true,  // min
+                            );
+                        } else {
+                            $plan = $value;
+                        }
+                        $input = $this->getValidInput();
+                        foreach ($plan as $inputString => $success) {
+                            $input[$fieldName] = $inputString;
+                            $errorMessage = "{$testName} ({$inputString})";
+
+                            $form->bind($input);
+                            if ($success) {
+                                $this->assertFormIsValid($form, $errorMessage);
+                            } else {
+                                $this->assertFormHasErros($form, 1, $errorMessage);
+                                $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
+                            }
+                        }
+                        break;
+
+                    # Max Length
+                    case 'max_length':
+                        if (!is_array($value)) {
+                            $plan = array(
+                                str_repeat('я', $value)     => true,   // max
+                                str_repeat('я', $value + 1) => false,  // max + 1
+                            );
+                        } else {
+                            $plan = $value;
+                        }
+                        $input = $this->getValidInput();
+                        foreach ($plan as $inputString => $success) {
+                            $input[$fieldName] = $inputString;
+                            $errorMessage = "{$testName} ({$inputString})";
+
+                            $form->bind($input);
+                            if ($success) {
+                                $this->assertFormIsValid($form, $errorMessage);
+                            } else {
+                                $this->assertFormHasErros($form, 1, $errorMessage);
+                                $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
+                            }
+                        }
+                        break;
+
+                    # Invalid
+                    case 'invalid':
+                        $input = $this->getValidInput();
+                        foreach ($value as $inputString) {
+                            $input[$fieldName] = $inputString;
+                            $errorMessage = "{$testName} ({$inputString})";
+
+                            $form->bind($input);
+                            $this->assertFormHasErros($form, 1, $errorMessage);
+                            $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
+                        }
+                        break;
+
+                    # Success
+                    case 'success':
+                        $input = $this->getValidInput();
+                        foreach ($value as $inputString ) {
+                            $input[$fieldName] = $inputString;
+                            $errorMessage = "{$testName} ({$inputString})";
+
+                            $form->bind($input);
+                            $this->assertFormIsValid($form, $errorMessage);
+                        }
+                        break;
+
+                    # Trim
+                    case 'trim':
+                        $input = $this->getValidInput();
+                        $expectedString = $input[$fieldName];
+                        $input[$fieldName] = " {$expectedString} ";
+                        $errorMessage = "{$testName} ({$input[$fieldName]})";
+
+                        $form->bind($input);
+                        $this->assertFormIsValid($form, $errorMessage);
+                        $this->assertEquals($expectedString, $form->getValue($fieldName), $errorMessage);
+                        break;
+
+                    default:
+                        throw new Exception(__METHOD__.": Unknown option or error code `{$errorCode}`");
+                }
+            }
+
+        }
     }
 
 
