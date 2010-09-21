@@ -72,14 +72,14 @@ class sfPHPUnitObjectHelper
     /**
      * Make array from Doctrine object suitable for supplied form
      *
-     * @param  Doctrine_Record $model
-     * @param  sfFormDoctrine  $form
+     * @param  BaseObject $model
+     * @param  sfForm     $form
      * @return array
      */
-    public function extractFormData(Doctrine_Record $model, sfFormDoctrine $form)
+    public static function extractFormData(BaseObject $model, sfForm $form)
     {
         $fields = $form->getWidgetSchema()->getFields();
-        $props  = $model->toArray();
+        $props  = $model->toArray(BasePeer::TYPE_FIELDNAME, false);
         return array_intersect_key($props, $fields);
     }
 
