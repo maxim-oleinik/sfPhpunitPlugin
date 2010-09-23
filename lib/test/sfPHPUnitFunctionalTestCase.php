@@ -45,7 +45,7 @@ abstract class sfPHPUnitFunctionalTestCase extends myUnitTestCase
         $_SERVER['SCRIPT_NAME'] = '/index.php';
 
         // Init context once for each app
-        $this->getContext($this->getApplication());
+        $this->getContext();
 
         // Init test browser
         $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPHPUnitLimeAdapter($this), $this->getFunctionalTesters());

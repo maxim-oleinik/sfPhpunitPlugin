@@ -100,6 +100,20 @@ class sfPHPUnitTestBrowser extends sfBrowser
 
 
     /**
+     * Set Ajax header
+     *
+     * Call before doing request
+     *
+     * @return void
+     */
+    public function setAjaxHeader()
+    {
+        $this->setHttpHeader('X-Requested-With', 'XMLHttpRequest');
+        return $this;
+    }
+
+
+    /**
      * Upload files
      *
      * When you can not use click() method and submit form with file
