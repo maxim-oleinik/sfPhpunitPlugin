@@ -31,6 +31,12 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
     protected $env = 'test';
 
     /**
+     * Debug mode
+     */
+    protected $debug = true;
+
+
+    /**
      * myTestObjectHelper
      */
     protected $helper;
@@ -65,7 +71,7 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
      */
     protected function isDebug()
     {
-        return true;
+        return $this->debug;
     }
 
 
@@ -122,7 +128,7 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
     {
         // Init concrete test config && autoload
         sfConfig::clear();
-        ProjectConfiguration::getApplicationConfiguration($this->getApplication(), $this->getEnvironment(), $debug = true);
+        ProjectConfiguration::getApplicationConfiguration($this->getApplication(), $this->getEnvironment(), $this->isDebug());
 
         // Object helper
         $this->helper = $this->makeHelper();
@@ -204,7 +210,7 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
     protected function getContext()
     {
         $app = $this->getApplication();
-        if (sfContext::hasInstance($app)) {
+        if (sfContext::hasInstance($app) && $this->isDebug() == sfContext::getInstance($app)->getConfiguration()->isDebug()) {
             return sfContext::getInstance($app);
         } else {
             return $this->createContext();
