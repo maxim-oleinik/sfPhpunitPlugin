@@ -48,7 +48,18 @@ abstract class sfPHPUnitFunctionalTestCase extends myUnitTestCase
         $this->getContext();
 
         // Init test browser
-        $this->browser = new sfTestFunctional(new sfPhpunitTestBrowser, new sfPHPUnitLimeAdapter($this), $this->getFunctionalTesters());
+        $this->browser = new sfTestFunctional($browser = new sfPhpunitTestBrowser, new sfPHPUnitLimeAdapter($this), $this->getFunctionalTesters());
+        $this->initBrowser($browser);
+    }
+
+
+    /**
+     * Custom test browser initialisation
+     *
+     * @param  sfPhpunitTestBrowser $browser
+     */
+    protected function initBrowser(sfPhpunitTestBrowser $browser)
+    {
     }
 
 

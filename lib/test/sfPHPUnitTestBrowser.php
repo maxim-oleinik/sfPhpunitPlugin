@@ -8,8 +8,14 @@
  */
 class sfPHPUnitTestBrowser extends sfBrowser
 {
-    private $_lastRequest       = '';
-    private $_lastRequestParams = '';
+    private
+        $_lastRequest       = '',
+        $_lastRequestParams = '';
+
+    /**
+     * Array sfPHPUnitTestBrowserObserverInterface
+     */
+    private $observers = array();
 
     /**
      * sfConfig copy
@@ -25,6 +31,30 @@ class sfPHPUnitTestBrowser extends sfBrowser
     {
         $this->cleanUp();
         parent::initialize($hostname, $remote, $options);
+    }
+
+
+    /**
+     * Add obserser
+     *
+     * @param  sfPHPUnitTestBrowserObserverInterface $observer
+     */
+    public function addObserver(sfPHPUnitTestBrowserObserverInterface $observer)
+    {
+        $this->observers[] = $observer;
+    }
+
+
+    /**
+     * Notify observers
+     *
+     * @param  string $method
+     */
+    public function notify($method)
+    {
+        foreach ($this->observers as $observer) {
+            $observer->notify($method, $this);
+        }
     }
 
 
@@ -74,6 +104,8 @@ class sfPHPUnitTestBrowser extends sfBrowser
             $start = ($pos - 150) > 0 ? $pos - 150 : 0;
             throw new Exception("Found XSS tocken: \n\n" . substr($content, $start, 300));
         }
+
+        $this->notify('postCall');
     }
 
 
