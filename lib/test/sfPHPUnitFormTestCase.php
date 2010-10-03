@@ -235,7 +235,7 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      * @param int    $errorsCount
      * @param string $message
      */
-    protected function assertFormHasErros(sfForm $form, $errorsCount, $message = null)
+    protected function assertFormHasErrors(sfForm $form, $errorsCount, $message = null)
     {
         $message = $message ? $message.PHP_EOL : null;
 
@@ -353,11 +353,11 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                         $input = $this->getValidInput();
                         unset($input[$fieldName]);
                         if ($value) {
-                            $form->bind($input);
-                            $this->assertFormHasErros($form, 1, $testName);
+                            $form->bind($input, array());
+                            $this->assertFormHasErrors($form, 1, $testName);
                             $this->assertFormError($form, $fieldName, $errorCode, $testName);
                         } else {
-                            $form->bind($input);
+                            $form->bind($input, array());
                             $this->assertFormIsValid($form, $testName);
                         }
                         break;
@@ -377,11 +377,11 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                             $input[$fieldName] = $inputString;
                             $errorMessage = "{$testName} ({$inputString})";
 
-                            $form->bind($input);
+                            $form->bind($input, array());
                             if ($success) {
                                 $this->assertFormIsValid($form, $errorMessage);
                             } else {
-                                $this->assertFormHasErros($form, 1, $errorMessage);
+                                $this->assertFormHasErrors($form, 1, $errorMessage);
                                 $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
                             }
                         }
@@ -402,11 +402,11 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                             $input[$fieldName] = $inputString;
                             $errorMessage = "{$testName} ({$inputString})";
 
-                            $form->bind($input);
+                            $form->bind($input, array());
                             if ($success) {
                                 $this->assertFormIsValid($form, $errorMessage);
                             } else {
-                                $this->assertFormHasErros($form, 1, $errorMessage);
+                                $this->assertFormHasErrors($form, 1, $errorMessage);
                                 $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
                             }
                         }
@@ -419,8 +419,8 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                             $input[$fieldName] = $inputString;
                             $errorMessage = "{$testName} ({$inputString})";
 
-                            $form->bind($input);
-                            $this->assertFormHasErros($form, 1, $errorMessage);
+                            $form->bind($input, array());
+                            $this->assertFormHasErrors($form, 1, $errorMessage);
                             $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
                         }
                         break;
@@ -432,7 +432,7 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                             $input[$fieldName] = $inputString;
                             $errorMessage = "{$testName} ({$inputString})";
 
-                            $form->bind($input);
+                            $form->bind($input, array());
                             $this->assertFormIsValid($form, $errorMessage);
                         }
                         break;
@@ -444,7 +444,7 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                         $input[$fieldName] = " {$expectedString} ";
                         $errorMessage = "{$testName} ({$input[$fieldName]})";
 
-                        $form->bind($input);
+                        $form->bind($input, array());
                         $this->assertFormIsValid($form, $errorMessage);
                         $this->assertEquals($expectedString, $form->getValue($fieldName), $errorMessage);
                         break;
@@ -480,7 +480,7 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
 
             // Errors
             } else {
-                $this->assertFormHasErros($form, $item->getErrorsCount(), $name);
+                $this->assertFormHasErrors($form, $item->getErrorsCount(), $name);
                 foreach ($item->getExpectedErrors() as $field => $error) {
                     $this->assertFormError($form, $field, $error, $name);
                 }
