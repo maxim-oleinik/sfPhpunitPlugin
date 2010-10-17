@@ -162,6 +162,10 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
 
         $this->_reset();
 
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
+        }
+
         if (!empty($e)) {
             throw $e;
         }
