@@ -153,7 +153,10 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      *
      * @return array sfPHPUnitFormValidationItem
      */
-    abstract protected function getValidationTestingPlan();
+    protected function getValidationTestingPlan()
+    {
+        return array();
+    }
 
 
     /**
