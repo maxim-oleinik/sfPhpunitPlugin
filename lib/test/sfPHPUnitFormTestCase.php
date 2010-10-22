@@ -348,6 +348,7 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
 
                 $testName = "{$fieldName}: {$errorCode}";
                 $form = $this->makeForm();
+                $form->getValidatorSchema()->setPostValidator(new sfValidatorPass());
 
                 switch ($errorCode) {
 

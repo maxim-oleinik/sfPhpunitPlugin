@@ -2,30 +2,41 @@
 ## Form tests
 
 sfPHPUnitFormTestCase
+
+    // AutoTests fixtures
     abstract protected function makeForm();
     abstract protected function getFields();
     abstract protected function getValidationTestingPlan();
     abstract protected function getValidData();
 
-    protected function getValidInput()
-    protected function makeInput(array $input)
-    protected function assertFormFields($expected, sfForm $form, $message = null)
-    protected function assertFormIsValid(sfForm $form, $message = null)
-    protected function assertFormHasErros(sfForm $form, $errorsCount, $message = null)
-    protected function assertFormError(sfForm $form, $field, $expectedError, $message = null)
-    protected function makeErrorMess(sfForm $form, $message)
-    protected function cleanInput(array $input)
-
+    // AutoTests
     public function testAutoFields()
     public function testAutoRequirements()
     public function testAutoValidation()
     public function testAutoFormIsValid()
+
+    // Utils & Testers
+    protected function getValidInput()
+    protected function makeInput(array $input)
+    protected function cleanInput(array $input)
+    protected function assertFormFields($expected, sfForm $form, $message = null)
+    protected function assertFormIsValid(sfForm $form, $message = null)
+    protected function assertFormHasErrors(sfForm $form, $errorsCount, $message = null)
+    protected function assertFormError(sfForm $form, $field, $expectedError, $message = null)
+    protected function makeErrorMess(sfForm $form, $message)
 
 
 Example:
 
     class ArticleFormTest extends sfPHPUnitFormTestCase
     {
+        /**
+         * Skip auto test which saves form
+         * Default: true
+         */
+        protected $saveForm = false;
+
+
         /**
          * Make form
          */
@@ -50,6 +61,7 @@ Example:
 
         /**
          * Describe all expected form fields and their requirements
+         * PostValidator is disabled
          */
         protected function getFields()
         {
@@ -61,13 +73,12 @@ Example:
                     'required'    => true,
                 ),
                 'slug' => array(
-                    'min_length'  => array('1234' => false, '12345' => true), // Custom texting plan
-                    'max_length'  => 100, // Accept custom testing plan
+                    'min_length'  => array('1234' => false, '12345' => true), // Custom testing plan
+                    'max_length'  => 100,
                     'trim'        => true,
                     'required'    => true,
                     'invalid'     => array(
                         'invalid slug',
-                        $this->makeArticle()->getSlug(), // Slug should be unique
                     ),
                     'success'     => array(
                         'validslug',
@@ -86,13 +97,31 @@ Example:
         }
 
 
+        /**
+         * Custom testing scenarios
+         */
+        protected function getValidationTestingPlan()
+        {
+            $validInput = $this->getValidInput();
+            $someArticle = $this->makeArticle();
+
+            return array(
+                // Уникальность email
+                'Slug should be unique' => new sfPHPUnitFormValidationItem(
+                    array_merge($validInput, array('slug' => $someArticle->getSlug())),
+                    array(
+                        'email_address' => 'invalid',
+                    )),
+            );
+        }
+
+
         // Do own tests here
 
         /**
          * Example
-         * @see sfPHPUnitFormTestCase
          */
-        public function testExemple()
+        public function testSaveForm()
         {
             $form = $this->makeForm();
 
@@ -103,6 +132,6 @@ Example:
             $this->assertFormIsValid($form);
 
             $ob = $form->save();
-            $this->assertEquals(1, count($this->find(get_class($ob), $this->cleanInput($data))));
+            $this->assertEquals(1, $this->queryFind(get_class($ob), $this->cleanInput($data))->count());
         }
     }
