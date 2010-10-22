@@ -70,6 +70,17 @@ class sfPHPUnitObjectHelper
 
 
     /**
+     * Make unique email
+     *
+     * @return string
+     */
+    public function makeEmail()
+    {
+        return $this->getUniqueCounter() . 'test.email@example.org';
+    }
+
+
+    /**
      * Make array from Doctrine object suitable for supplied form
      *
      * @param  Doctrine_Record $model
