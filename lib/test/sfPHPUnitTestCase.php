@@ -15,7 +15,6 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
      */
     protected $preserveGlobalState = false;
 
-
     /**
      * Application name
      *
@@ -35,9 +34,8 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
      */
     protected $debug = true;
 
-
     /**
-     * myTestObjectHelper
+     * @see makeHelper()
      */
     protected $helper;
 
@@ -104,7 +102,7 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
 
 
     /**
-     * Creates new test helper
+     * Create new test helper
      *
      * @return sfBaseTestObjectHelper
      */
@@ -161,6 +159,10 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
         }
 
         $this->_reset();
+
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
+        }
 
         if (!empty($e)) {
             throw $e;
