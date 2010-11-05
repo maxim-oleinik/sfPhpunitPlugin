@@ -220,10 +220,10 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
     /**
      * Compare two model objects
      */
-    public function assertModels(Doctrine_Record $expected, Doctrine_Record $actual, $message = null)
+    public function assertModels(BaseObject $expected, BaseObject $actual, $message = null)
     {
         $this->assertEquals(get_class($expected), get_class($actual), $message);
-        $this->assertEquals($expected->toArray(false), $actual->toArray(false), $message);
+        $this->assertEquals($expected->toArray(), $actual->toArray(), $message);
     }
 
 
