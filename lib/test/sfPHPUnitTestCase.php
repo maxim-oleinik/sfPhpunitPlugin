@@ -1,7 +1,7 @@
 <?php
 
 /**
- * sfBasePhpunitUnitTestCase is the super class for all unit
+ * sfPHPUnitTestCase is the super class for all unit
  * tests using PHPUnit.
  *
  * @package    sfPhpunitPlugin

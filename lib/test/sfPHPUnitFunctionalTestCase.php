@@ -1,7 +1,7 @@
 <?php
 
 /**
- * sfBasePhpunitFunctionalTestCase is the super class for all functional
+ * sfPHPUnitFunctionalTestCase is the super class for all functional
  * tests using PHPUnit.
  *
  * @package    sfPhpunitPlugin
@@ -48,7 +48,7 @@ abstract class sfPHPUnitFunctionalTestCase extends myUnitTestCase
         $this->getContext();
 
         // Init test browser
-        $this->browser = new sfTestFunctional($browser = new sfPhpunitTestBrowser, new sfPHPUnitLimeAdapter($this), $this->getFunctionalTesters());
+        $this->browser = new sfTestFunctional($browser = new sfPHPUnitTestBrowser, new sfPHPUnitLimeAdapter($this), $this->getFunctionalTesters());
         $this->initBrowser($browser);
     }
 
@@ -56,9 +56,9 @@ abstract class sfPHPUnitFunctionalTestCase extends myUnitTestCase
     /**
      * Custom test browser initialisation
      *
-     * @param  sfPhpunitTestBrowser $browser
+     * @param  sfPHPUnitTestBrowser $browser
      */
-    protected function initBrowser(sfPhpunitTestBrowser $browser)
+    protected function initBrowser(sfPHPUnitTestBrowser $browser)
     {
     }
 
