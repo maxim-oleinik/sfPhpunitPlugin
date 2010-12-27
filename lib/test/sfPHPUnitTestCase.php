@@ -237,7 +237,7 @@ abstract class sfPHPUnitTestCase extends PHPUnit_Framework_TestCase
      */
     protected function queryFind($modelName, array $conditions)
     {
-        $table = Doctrine_Core::getTable($modelName);
+        $table = Doctrine::getTable($modelName);
         $query = $table->createQuery('a');
 
         foreach ($conditions as $column => $condition) {
