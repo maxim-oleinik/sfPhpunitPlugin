@@ -416,6 +416,24 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                         }
                         break;
 
+                    # Min
+                    case 'min':
+                        $input = $this->getValidInput();
+                        $plan = array($value => true, $value-1 => false);
+                        foreach ($plan as $inputString => $success) {
+                            $input[$fieldName] = $inputString;
+                            $errorMessage = "{$testName} ({$inputString})";
+
+                            $form->bind($input, array());
+                            if ($success) {
+                                $this->assertFormIsValid($form, $errorMessage);
+                            } else {
+                                $this->assertFormHasErrors($form, 1, $errorMessage);
+                                $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
+                            }
+                        }
+                        break;
+
                     # Invalid
                     case 'invalid':
                         $input = $this->getValidInput();
