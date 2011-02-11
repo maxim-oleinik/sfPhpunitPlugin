@@ -19,10 +19,10 @@ class sfPHPUnitFunctionalTesterResponse extends sfTesterResponse
             $uri = 'http://localhost' . $uri;
         }
 
-        return $this->begin()
-            ->isStatusCode($statusCode)
-            ->isHeader('Location', $uri)
-        ->end();
+        $this->isStatusCode($statusCode);
+        $this->isHeader('Location', $uri);
+
+        return $this->getObjectToReturn();
     }
 
 }
