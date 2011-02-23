@@ -276,6 +276,34 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
 
 
     /**
+     * Check form with test plan
+     *
+     * @param sfForm $form
+     * @param array  $plan
+     * @param array  $input
+     * @param string $errorCode
+     * @param string $message
+     */
+    protected function checkFormWithPlan(sfForm $form, array $plan, array $input, $errorCode, $message)
+    {
+        foreach ($plan as $fieldName => $data) {
+            foreach ($data as $inputString => $success) {
+                $input[$fieldName] = $inputString;
+                $errorMessage = "{$message} ({$inputString})";
+
+                $form->bind($input, array());
+                if ($success) {
+                    $this->assertFormIsValid($form, $errorMessage);
+                } else {
+                    $this->assertFormHasErrors($form, 1, $errorMessage);
+                    $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
+                }
+            }
+        }
+    }
+
+
+    /**
      * Make error messge
      *
      * Display incoming data and errors list
@@ -370,86 +398,40 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                     case 'min_length':
                         if (!is_array($value)) {
                             $plan = array(
-                                str_repeat('я', $value - 1) => false, // min - 1
-                                str_repeat('я', $value)     => true,  // min
+                                str_repeat('z', $value - 1) => false, // min - 1
+                                str_repeat('z', $value)     => true,  // min
                             );
                         } else {
                             $plan = $value;
                         }
-                        $input = $this->getValidInput();
-                        foreach ($plan as $inputString => $success) {
-                            $input[$fieldName] = $inputString;
-                            $errorMessage = "{$testName} ({$inputString})";
-
-                            $form->bind($input, array());
-                            if ($success) {
-                                $this->assertFormIsValid($form, $errorMessage);
-                            } else {
-                                $this->assertFormHasErrors($form, 1, $errorMessage);
-                                $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
-                            }
-                        }
+                        $plan = array($fieldName => $plan);
+                        $this->checkFormWithPlan($form, $plan, $this->getValidInput(), $errorCode, $testName);
                         break;
 
                     # Max Length
                     case 'max_length':
                         if (!is_array($value)) {
                             $plan = array(
-                                str_repeat('я', $value)     => true,   // max
-                                str_repeat('я', $value + 1) => false,  // max + 1
+                                str_repeat('z', $value)     => true,   // max
+                                str_repeat('z', $value + 1) => false,  // max + 1
                             );
                         } else {
                             $plan = $value;
                         }
-                        $input = $this->getValidInput();
-                        foreach ($plan as $inputString => $success) {
-                            $input[$fieldName] = $inputString;
-                            $errorMessage = "{$testName} ({$inputString})";
-
-                            $form->bind($input, array());
-                            if ($success) {
-                                $this->assertFormIsValid($form, $errorMessage);
-                            } else {
-                                $this->assertFormHasErrors($form, 1, $errorMessage);
-                                $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
-                            }
-                        }
+                        $plan = array($fieldName => $plan);
+                        $this->checkFormWithPlan($form, $plan, $this->getValidInput(), $errorCode, $testName);
                         break;
 
                     # Min
                     case 'min':
-                        $input = $this->getValidInput();
-                        $plan = array($value => true, $value-1 => false);
-                        foreach ($plan as $inputString => $success) {
-                            $input[$fieldName] = $inputString;
-                            $errorMessage = "{$testName} ({$inputString})";
-
-                            $form->bind($input, array());
-                            if ($success) {
-                                $this->assertFormIsValid($form, $errorMessage);
-                            } else {
-                                $this->assertFormHasErrors($form, 1, $errorMessage);
-                                $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
-                            }
-                        }
+                        $plan = array($fieldName => array($value => true, $value-1 => false));
+                        $this->checkFormWithPlan($form, $plan, $this->getValidInput(), $errorCode, $testName);
                         break;
 
                     # Max
                     case 'max':
-                        $input = $this->getValidInput();
-                        $plan = array($value => true, $value+1 => false);
-                        foreach ($plan as $inputString => $success) {
-                            $input[$fieldName] = $inputString;
-                            $errorMessage = "{$testName} ({$inputString})";
-
-                            $form->bind($input, array());
-                            if ($success) {
-                                $this->assertFormIsValid($form, $errorMessage);
-                            } else {
-                                $this->assertFormHasErrors($form, 1, $errorMessage);
-                                $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
-                            }
-                        }
+                        $plan = array($fieldName => array($value => true, $value+1 => false));
+                        $this->checkFormWithPlan($form, $plan, $this->getValidInput(), $errorCode, $testName);
                         break;
 
                     # Invalid
