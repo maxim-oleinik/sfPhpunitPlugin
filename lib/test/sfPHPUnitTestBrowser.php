@@ -10,7 +10,8 @@ class sfPHPUnitTestBrowser extends sfBrowser
 {
     private
         $_lastRequest       = '',
-        $_lastRequestParams = '';
+        $_lastRequestParams = '',
+        $_lastMethod        = '';
 
     /**
      * Array sfPHPUnitTestBrowserObserverInterface
@@ -88,6 +89,7 @@ class sfPHPUnitTestBrowser extends sfBrowser
         $this->cleanUp();
 
         parent::call($uri, $method, $parameters, $changeStack);
+        $this->_lastMethod        = strtoupper($method);
         $this->_lastRequest       = $this->getRequest()->getUri();
         $this->_lastRequestParams = var_export($this->getRequest()->getParameterHolder()->getAll(), true);
 
@@ -106,6 +108,17 @@ class sfPHPUnitTestBrowser extends sfBrowser
         }
 
         $this->notify('postCall');
+    }
+
+
+    /**
+     * Get last request Method
+     *
+     * @return string
+     */
+    public function getLastRequestMethod()
+    {
+        return $this->_lastMethod;
     }
 
 

@@ -129,7 +129,8 @@ abstract class sfPHPUnitFunctionalTestCase extends myUnitTestCase
     private function _makeRequestErrorMessage($mess, Exception $e)
     {
         $result = $mess  . PHP_EOL . PHP_EOL
-                . 'Request: ' . $this->browser->getLastRequestUri() . PHP_EOL
+                . 'Request: ' . $this->browser->getLastRequestMethod() . ' '
+                              . $this->browser->getLastRequestUri() . PHP_EOL
                 . 'Request params: ' . PHP_EOL . $this->browser->getLastRequestParams();
 
         if ($_FILES) {
