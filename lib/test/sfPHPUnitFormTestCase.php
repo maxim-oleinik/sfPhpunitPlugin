@@ -471,6 +471,12 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                         $this->assertEquals($expectedString, $form->getValue($fieldName), $errorMessage);
                         break;
 
+                    # InstanceOf
+                    case 'instanceof':
+                        $errorMessage = "{$testName} ({$value})";
+                        $this->assertInstanceOf($value, $form->getValidatorSchema()->offsetGet($fieldName), $errorMessage);
+                        break;
+
                     default:
                         throw new Exception(__METHOD__.": Unknown option or error code `{$errorCode}`");
                 }
