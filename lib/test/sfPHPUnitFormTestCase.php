@@ -206,10 +206,10 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      */
     protected function assertFormFields($expected, sfForm $form, $message = null)
     {
-        sort($expected);
-
-        $actual = array_keys($form->getWidgetSchema()->getFields());
-        sort($actual);
+        $actual = array_keys(array_merge(
+            $form->getWidgetSchema()->getFields(),
+            $form->getEmbeddedForms()
+        ));
 
         $this->assertEquals($expected, $actual, $message);
     }
@@ -333,7 +333,26 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
             unset($input[$this->form->getCsrfFieldName()]);
         }
 
+        foreach ($this->form->getEmbeddedForms() as $name => $eForm) {
+            if (isset($input[$name])) {
+                unset($input[$name]);
+            }
+        }
+
         return $input;
+    }
+
+
+    /**
+     * Is given field name is embeded form
+     *
+     * @param  string $fieldName
+     * @return bool
+     */
+    protected function isEmbeddedForm($fieldName)
+    {
+        $embedded = $this->form->getEmbeddedForms();
+        return $embedded && isset($embedded[$fieldName]);
     }
 
 
@@ -368,7 +387,8 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
             if (!$requirements) {
                 $requirements = array();
             }
-            if (!isset($requirements['required'])) {
+
+            if (!$this->isEmbeddedForm($fieldName) && !isset($requirements['required'])) {
                 $requirements['required'] = false;
             }
 
@@ -477,6 +497,12 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                         $this->assertInstanceOf($value, $form->getValidatorSchema()->offsetGet($fieldName), $errorMessage);
                         break;
 
+                    # Embed forms
+                    case 'embed':
+                        $errorMessage = "{$testName} ({$value})";
+                        $this->assertInstanceOf($value, $form->getEmbeddedForm($fieldName), $errorMessage);
+                        break;
+
                     default:
                         throw new Exception(__METHOD__.": Unknown option or error code `{$errorCode}`");
                 }
@@ -533,6 +559,8 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
             $object = $this->form->save();
             $this->assertEquals(1, $this->queryFind(get_class($object), $this->cleanInput($input))->count(), 'Expected found 1 object');
         }
+
+        return $input;
     }
 
 }

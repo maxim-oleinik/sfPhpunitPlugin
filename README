@@ -23,7 +23,9 @@ sfPHPUnitFormTestCase
     protected function assertFormIsValid(sfForm $form, $message = null)
     protected function assertFormHasErrors(sfForm $form, $errorsCount, $message = null)
     protected function assertFormError(sfForm $form, $field, $expectedError, $message = null)
+    protected function checkFormWithPlan(sfForm $form, array $plan, array $input, $errorCode, $message)
     protected function makeErrorMess(sfForm $form, $message)
+    protected function isEmbeddedForm($fieldName)
 
 
 Example:
@@ -55,6 +57,9 @@ Example:
                 'title'   => 'Article title',
                 'slug'    => 'slug-code',
                 'text'    => 'Article text',
+                'author' => array(
+                    'name' => 'Author Name',
+                ),
             );
         }
 
@@ -89,6 +94,9 @@ Example:
                 'text' => array(
                     'trim'        => true,
                     'required'    => true,
+                ),
+                'author' => array(
+                    'embed' => 'AuthorForm',
                 ),
                 '_csrf_token' => array(
                     'required'    => true,
