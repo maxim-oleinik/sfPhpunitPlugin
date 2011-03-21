@@ -206,10 +206,13 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      */
     protected function assertFormFields($expected, sfForm $form, $message = null)
     {
+        sort($expected);
+
         $actual = array_keys(array_merge(
             $form->getWidgetSchema()->getFields(),
             $form->getEmbeddedForms()
         ));
+        sort($actual);
 
         $this->assertEquals($expected, $actual, $message);
     }
