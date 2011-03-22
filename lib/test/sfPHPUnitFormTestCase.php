@@ -270,11 +270,25 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
             $errors = implode('; ', $form->getGlobalErrors());
             $this->assertContains($expectedError, $errors, $this->makeErrorMess($form, $message."Global errors contains next text"));
         } else {
-            $errors = $form->getErrorSchema();
-            $this->assertTrue(isset($errors[$field]), $this->makeErrorMess($form, $message."Expected field `{$field}` HAS error"));
-            $error = $errors[$field]->getCode();
-            $this->assertEquals($expectedError, $error, $this->makeErrorMess($form, $message."Expected error `{$expectedError}` for field `{$field}`"));
+            $message = $this->makeErrorMess($form, $message."Expected error `{$expectedError}` for field `{$field}");
+            $this->assertErrorSchemaError($form->getErrorSchema(), $field, $expectedError, $message);
         }
+    }
+
+
+    /**
+     * Assert error schema error
+     *
+     * @param sfValidatorErrorSchema $errors
+     * @param string $field         - Form field name
+     * @param string $expectedError - Expected error, "required"
+     * @param string $message
+     */
+    protected function assertErrorSchemaError(sfValidatorErrorSchema $errors, $field, $expectedError, $message = null)
+    {
+        $this->assertTrue(isset($errors[$field]), $message);
+        $error = $errors[$field]->getCode();
+        $this->assertEquals($expectedError, $error, $message);
     }
 
 
@@ -291,23 +305,58 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
     {
         foreach ($plan as $fieldName => $data) {
             foreach ($data as $inputString => $success) {
-                $input[$fieldName] = $inputString;
-                $errorMessage = "{$message} ({$inputString})";
+                $testInput = $input;
+                $testInput[$fieldName] = $inputString;
+                $errorMessage = "{$message} (with input: {$inputString})";
 
-                $form->bind($input, array());
-                if ($success) {
-                    $this->assertFormIsValid($form, $errorMessage);
-                } else {
-                    $this->assertFormHasErrors($form, 1, $errorMessage);
-                    $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
-                }
+                $error = $success ? false : $errorCode;
+                $this->checkFormFieldValidation($form, $testInput, $fieldName, $error, $errorMessage);
             }
         }
     }
 
 
     /**
-     * Make error messge
+     * Check form field validation
+     *
+     * @param  sfForm $form
+     * @param  array  $input
+     * @param  string $fieldName
+     * @param  string $errorCode
+     * @param  string $message
+     * @return array  clean values
+     */
+    protected function checkFormFieldValidation(sfForm $form, array $input, $fieldName, $errorCode, $message)
+    {
+        $expectedErrors = !$errorCode ? array() : array($fieldName => $errorCode);
+        return $this->checkValidatorSchema($form->getValidatorSchema(), $input, $expectedErrors, $message);
+    }
+
+
+    /**
+     * Check validator schema
+     */
+    protected function checkValidatorSchema(sfValidatorSchema $schema, array $input, array $expectedErrors, $message)
+    {
+        try {
+            $result = $schema->clean($input);
+            $this->assertSame(array(), $expectedErrors, $this->makeErrorMess2(null, $input, "Expected from HAS errors\n".$message));
+            return $result;
+
+        } catch (sfValidatorErrorSchema $e) {
+            $this->assertGreaterThan(0, count($expectedErrors), $this->makeErrorMess2($e, $input, "Expected from has NO errors\n".$message));
+            $this->assertEquals(count($expectedErrors), $e->count(), $this->makeErrorMess2($e, $input, $message));
+
+            foreach ($expectedErrors as $field => $expectedError) {
+                $message = $this->makeErrorMess2($e, $input, $message."\nExpected error `{$expectedError}` for field `{$field}");
+                $this->assertErrorSchemaError($e, $field, $expectedError, $message);
+            }
+        }
+    }
+
+
+    /**
+     * Make error message
      *
      * Display incoming data and errors list
      *
@@ -320,6 +369,19 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
             $message,
             $form->getErrorSchema(),
             var_export($form->getTaintedValues(), true)
+        );
+    }
+
+
+    /**
+     * Make error message - TMP
+     */
+    protected function makeErrorMess2(sfValidatorErrorSchema $e = null, array $input, $message)
+    {
+        return sprintf("%s\n\nErrors: %s\n\nInput:\n%s",
+            $message,
+            $e,
+            var_export($input, true)
         );
     }
 
@@ -401,20 +463,16 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                 $form = $this->makeForm();
                 $form->getValidatorSchema()->setPostValidator(new sfValidatorPass());
 
+
                 switch ($errorCode) {
 
                     # Required
                     case 'required':
                         $input = $this->getValidInput();
                         unset($input[$fieldName]);
-                        if ($value) {
-                            $form->bind($input, array());
-                            $this->assertFormHasErrors($form, 1, $testName);
-                            $this->assertFormError($form, $fieldName, $errorCode, $testName);
-                        } else {
-                            $form->bind($input, array());
-                            $this->assertFormIsValid($form, $testName);
-                        }
+                        $plan = array($fieldName => array('' => !$value));
+                        $error = $value ? $errorCode : false;
+                        $this->checkFormFieldValidation($form, $input, $fieldName, $error, $testName);
                         break;
 
                     # Min Length
@@ -459,15 +517,12 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
 
                     # Invalid
                     case 'invalid':
-                        $input = $this->getValidInput();
+                        $plan = array();
                         foreach ($value as $inputString) {
-                            $input[$fieldName] = $inputString;
-                            $errorMessage = "{$testName} ({$inputString})";
-
-                            $form->bind($input, array());
-                            $this->assertFormHasErrors($form, 1, $errorMessage);
-                            $this->assertFormError($form, $fieldName, $errorCode, $errorMessage);
+                            $plan[$inputString] = false;
                         }
+                        $plan = array($fieldName => $plan);
+                        $this->checkFormWithPlan($form, $plan, $this->getValidInput(), $errorCode, $testName);
                         break;
 
                     # Success
@@ -489,9 +544,8 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                         $input[$fieldName] = " {$expectedString} ";
                         $errorMessage = "{$testName} ({$input[$fieldName]})";
 
-                        $form->bind($input, array());
-                        $this->assertFormIsValid($form, $errorMessage);
-                        $this->assertEquals($expectedString, $form->getValue($fieldName), $errorMessage);
+                        $actual = $this->checkFormFieldValidation($form, $input, $fieldName, false, $testName);
+                        $this->assertEquals($expectedString, $actual[$fieldName], $errorMessage);
                         break;
 
                     # InstanceOf
