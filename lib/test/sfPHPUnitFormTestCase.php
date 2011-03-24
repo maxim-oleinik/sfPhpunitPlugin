@@ -548,6 +548,18 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                         $this->assertEquals($expectedString, $actual[$fieldName], $errorMessage);
                         break;
 
+                    # Trim
+                    case 'transform':
+                        $input = $this->getValidInput();
+                        foreach ($value as $origin => $expected) {
+                            $input[$fieldName] = $origin;
+                            $errorMessage = "{$testName} ({$input[$fieldName]})";
+
+                            $actual = $this->checkFormFieldValidation($form, $input, $fieldName, false, $testName);
+                            $this->assertEquals($expected, $actual[$fieldName], $errorMessage);
+                        }
+                        break;
+
                     # InstanceOf
                     case 'instanceof':
                         $errorMessage = "{$testName} ({$value})";

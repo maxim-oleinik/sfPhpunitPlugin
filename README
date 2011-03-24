@@ -90,6 +90,7 @@ Example:
                         'validslug1',
                         'Valid-Slug1',
                     ),
+                    'transform' => array('SLUG' => 'slug'),
                 ),
                 'text' => array(
                     'trim'        => true,
