@@ -169,4 +169,30 @@ abstract class sfPHPUnitFunctionalTestCase extends myUnitTestCase
         return $this->browser->getContext()->getRouting()->generate($name, $params, $absolute);
     }
 
+
+    /**
+     * Create and authenticate user
+     *
+     * @param  $user
+     * @return $user
+     */
+    protected function authenticateUser($user = null)
+    {
+        if (!$user) {
+            $user = $this->helper->makeUser();
+        }
+
+        // Init session
+        $context = $this->browser->getContext(true);
+
+        $context->getUser()->signIn($user);
+
+        // Save user data in SessionStorage
+        $context->getUser()->shutdown();
+        // Save session to file
+        $context->getStorage()->shutdown();
+
+        return $user;
+    }
+
 }
