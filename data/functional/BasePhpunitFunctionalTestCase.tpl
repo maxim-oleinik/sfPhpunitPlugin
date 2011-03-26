@@ -11,16 +11,15 @@ abstract class {baseTestClassName} extends sfPHPUnitFunctionalTestCase
      * @see sfTestFunctionalBase::setTesters()
      *
      * @return array
-     *          'request'  => 'sfTesterRequest',
-     *          'response' => 'sfTesterResponse',
-     *          'user'     => 'sfTesterUser',
      */
     protected function getFunctionalTesters()
     {
         return array(
             'request'  => 'sfPHPUnitFunctionalTesterRequest',
-            'response' => 'sfTesterResponse',
+            'response' => 'sfPHPUnitFunctionalTesterResponse',
             'user'     => 'sfTesterUser',
+            'model'    => 'sfTesterDoctrine',
+            'mail'     => 'sfPHPUnitFunctionalTesterMail',
         );
     }
 
