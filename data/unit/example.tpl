@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__).'/../bootstrap/all.php';
+require_once __DIR__.'/../bootstrap/all.php';
 
 
 /**

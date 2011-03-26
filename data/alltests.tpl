@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__).'/bootstrap/all.php';
+require_once __DIR__.'/bootstrap/all.php';
 
 
 /**
@@ -14,10 +14,9 @@ class AllTests extends PHPUnit_Framework_TestSuite
     {
         $suite = new AllTests('PHPUnit');
 
-        $base  = dirname(__FILE__);
         $files = sfFinder::type('file')->name('*Test.php')->in(array(
-            $base.'/unit',
-            $base.'/functional',
+            __DIR__.'/unit',
+            __DIR__.'/functional',
         ));
 
         foreach ($files as $file) {
