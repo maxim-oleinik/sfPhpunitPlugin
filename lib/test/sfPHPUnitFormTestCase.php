@@ -409,6 +409,15 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
             }
         }
 
+        // Unset not required input
+        foreach ($this->getFields() as $field => $requirements) {
+            if (!isset($requirements['required']) || !$requirements['required']) {
+                if (array_key_exists($field, $input)) {
+                    unset($input[$field]);
+                }
+            }
+        }
+
         return $input;
     }
 
