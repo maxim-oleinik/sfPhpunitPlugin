@@ -297,6 +297,9 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
      *
      * @param sfForm $form
      * @param array  $plan
+     *      fieldName => array(
+     *          array($result = true/false, $inputValue),
+     *      )
      * @param array  $input
      * @param string $errorCode
      * @param string $message
@@ -304,10 +307,12 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
     protected function checkFormWithPlan(sfForm $form, array $plan, array $input, $errorCode, $message)
     {
         foreach ($plan as $fieldName => $data) {
-            foreach ($data as $inputString => $success) {
+            foreach ($data as $row) {
+                list($success, $inputValue) = $row;
+
                 $testInput = $input;
-                $testInput[$fieldName] = $inputString;
-                $errorMessage = "{$message} (with input: {$inputString})";
+                $testInput[$fieldName] = $inputValue;
+                $errorMessage = sprintf("%s (with input: %s)", $message, var_export($inputValue, true));
 
                 $error = $success ? false : $errorCode;
                 $this->checkFormFieldValidation($form, $testInput, $fieldName, $error, $errorMessage);
@@ -479,11 +484,14 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                     case 'min_length':
                         if (!is_array($value)) {
                             $plan = array(
-                                str_repeat('z', $value - 1) => false, // min - 1
-                                str_repeat('z', $value)     => true,  // min
+                                array(false, str_repeat('z', $value - 1)), // min - 1
+                                array(true,  str_repeat('z', $value)),     // min
                             );
                         } else {
-                            $plan = $value;
+                            $plan = array();
+                            foreach ($value as $inputValue => $success) {
+                                $plan[] = array($success, $inputValue);
+                            }
                         }
                         $plan = array($fieldName => $plan);
                         $this->checkFormWithPlan($form, $plan, $this->getValidInput(), $errorCode, $testName);
@@ -493,11 +501,14 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                     case 'max_length':
                         if (!is_array($value)) {
                             $plan = array(
-                                str_repeat('z', $value)     => true,   // max
-                                str_repeat('z', $value + 1) => false,  // max + 1
+                                array(true,  str_repeat('z', $value)),     // max
+                                array(false, str_repeat('z', $value + 1)), // max + 1
                             );
                         } else {
-                            $plan = $value;
+                            $plan = array();
+                            foreach ($value as $inputValue => $success) {
+                                $plan[] = array($success, $inputValue);
+                            }
                         }
                         $plan = array($fieldName => $plan);
                         $this->checkFormWithPlan($form, $plan, $this->getValidInput(), $errorCode, $testName);
@@ -505,13 +516,19 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
 
                     # Min
                     case 'min':
-                        $plan = array($fieldName => array($value => true, $value-1 => false));
+                        $plan = array($fieldName => array(
+                            array(true,  $value),
+                            array(false, $value-1),
+                        ));
                         $this->checkFormWithPlan($form, $plan, $this->getValidInput(), $errorCode, $testName);
                         break;
 
                     # Max
                     case 'max':
-                        $plan = array($fieldName => array($value => true, $value+1 => false));
+                        $plan = array($fieldName => array(
+                            array(true,  $value),
+                            array(false, $value+1),
+                        ));
                         $this->checkFormWithPlan($form, $plan, $this->getValidInput(), $errorCode, $testName);
                         break;
 
@@ -519,7 +536,7 @@ abstract class sfPHPUnitFormTestCase extends myUnitTestCase
                     case 'invalid':
                         $plan = array();
                         foreach ($value as $inputString) {
-                            $plan[$inputString] = false;
+                            $plan[] = array(false, $inputString);
                         }
                         $plan = array($fieldName => $plan);
                         $this->checkFormWithPlan($form, $plan, $this->getValidInput(), $errorCode, $testName);
