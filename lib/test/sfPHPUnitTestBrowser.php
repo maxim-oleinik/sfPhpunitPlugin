@@ -198,6 +198,19 @@ class sfPHPUnitTestBrowser extends sfBrowser
     public function setConfigValue($key, $value)
     {
         $this->rawConfiguration[$key] = $value;
+        return $this;
+    }
+
+
+    /**
+     * Set HTTP_HOST
+     *
+     * @param string
+     */
+    public function setHost($host)
+    {
+        $this->hostname = $host;
+        return $this;
     }
 
 }
